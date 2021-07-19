@@ -1,3 +1,6 @@
+mod pbrt;
+
 fn main() {
-    println!("Hello, world!");
+    let test = pbrt::Vector2f::new(1.0, 2.0);
+    println!("{:?}", test);
 }
