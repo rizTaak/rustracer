@@ -7,4 +7,3 @@ pub type Float = f32;
 pub trait HasNaN {
     fn has_nans(&self) -> bool;
 }
-

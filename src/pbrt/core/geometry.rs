@@ -1,20 +1,26 @@
 use crate::pbrt;
+use core::ops::Add;
 
-#[derive(Debug, Default)]
-pub struct Vector2<T>
-where
-    T: Default,
-{
+#[derive(Debug, Default, Copy, Clone)]
+pub struct Vector2<T: Add> {
     pub x: T,
     pub y: T,
 }
 
-impl<T> Vector2<T>
-where
-    T: Default,
-{
+impl<T: Add> Vector2<T> {
     pub fn new(x: T, y: T) -> Self {
         Self { x: x, y: y }
+    }
+}
+
+impl<T: Add<Output = T>> Add for Vector2<T> {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
     }
 }
 
@@ -37,7 +43,6 @@ impl pbrt::HasNaN for Vector2i {
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
-    
     #[test]
     pub fn test_vector2f_default() {
         let vec2f = super::Vector2f::default();
@@ -56,5 +61,22 @@ mod tests {
     pub fn test_vector2f_nan() {
         let vec2f = super::Vector2f::new(pbrt::Float::NAN, pbrt::Float::NAN);
         assert_eq!(vec2f.has_nans(), true);
+    }
+
+    #[test]
+    pub fn test_vector2f_copy() {
+        let vec2f = super::Vector2f::new(1.0, 2.0);
+        let cp = vec2f;
+        assert_eq!(cp.x, vec2f.x);
+        assert_eq!(cp.y, vec2f.y);
+    }
+
+    #[test]
+    pub fn test_vector2f_add() {
+        let left = super::Vector2f::new(1.0, 1.0);
+        let right = super::Vector2f::new(2.0, 2.0);
+        let result = left + right;
+        assert_eq!(result.x, 3.0);
+        assert_eq!(result.y, 3.0);
     }
 }
