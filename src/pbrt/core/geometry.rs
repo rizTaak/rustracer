@@ -1,5 +1,6 @@
 use crate::pbrt;
 use core::ops::Add;
+use core::ops::AddAssign;
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Vector2<T: Add> {
@@ -21,6 +22,15 @@ impl<T: Add<Output = T>> Add for Vector2<T> {
             x: self.x + other.x,
             y: self.y + other.y,
         }
+    }
+}
+
+impl<T: Add<Output = T> + Copy> AddAssign for Vector2<T> {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        };
     }
 }
 
@@ -78,5 +88,14 @@ mod tests {
         let result = left + right;
         assert_eq!(result.x, 3.0);
         assert_eq!(result.y, 3.0);
+    }
+
+    #[test]
+    pub fn test_vector2f_add_assign() {
+        let mut left = super::Vector2f::new(1.0, 1.0);
+        let right = super::Vector2f::new(2.0, 2.0);
+        left += right;
+        assert_eq!(left.x, 3.0);
+        assert_eq!(left.y, 3.0);
     }
 }
