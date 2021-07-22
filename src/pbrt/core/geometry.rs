@@ -1,5 +1,5 @@
-use crate::pbrt::HasNaN;
 use crate::pbrt;
+use crate::pbrt::HasNaN;
 use core::ops::Add;
 use core::ops::AddAssign;
 use core::ops::Sub;
@@ -22,6 +22,14 @@ impl<T: HasNaN> HasNaN for Vector2<T> {
         return self.x.has_nan() || self.y.has_nan();
     }
 }
+
+impl<T: PartialEq> PartialEq for Vector2<T> {
+    fn eq(&self, other: &Vector2<T>) -> bool {
+        return self.x == other.x && self.y == other.y;
+    }
+}
+
+impl<T: PartialEq> Eq for Vector2<T> {}
 
 impl<T: Add<Output = T> + HasNaN> Add for Vector2<T> {
     type Output = Self;
@@ -67,12 +75,18 @@ impl<T: Sub<Output = T> + Copy> SubAssign for Vector2<T> {
 pub type Vector2f = Vector2<pbrt::Float>;
 pub type Vector2i = Vector2<i32>;
 
-
 #[cfg(test)]
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
-    
+
+    #[test]
+    pub fn test_vector2_eq() {
+        let left = super::Vector2f::new(1.0, 2.0);
+        let right = super::Vector2f::new(1.0, 2.0);
+        assert_eq!(left == right, true);
+    }
+
     #[test]
     pub fn test_vector2f_default() {
         let vec2f = super::Vector2f::default();
