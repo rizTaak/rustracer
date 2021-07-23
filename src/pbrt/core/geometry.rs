@@ -1,7 +1,11 @@
 use crate::pbrt;
+use crate::pbrt::Component;
 use crate::pbrt::HasNaN;
+use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
+use core::ops::Div;
+use core::ops::Mul;
 use core::ops::Sub;
 use core::ops::SubAssign;
 
@@ -11,64 +15,77 @@ pub struct Vector2<T> {
     pub y: T,
 }
 
-impl<T> Vector2<T> {
+impl<T: Component> Vector2<T> {
     pub fn new(x: T, y: T) -> Self {
+        debug_assert!(!x.has_nan());
+        debug_assert!(!y.has_nan());
         Self { x: x, y: y }
     }
 }
 
-impl<T: HasNaN> HasNaN for Vector2<T> {
+impl<T: Component> HasNaN for Vector2<T> {
     fn has_nan(&self) -> bool {
         return self.x.has_nan() || self.y.has_nan();
     }
 }
 
-impl<T: PartialEq> PartialEq for Vector2<T> {
+impl<T: Component> PartialEq for Vector2<T> {
+    // todo: with floats nan != nan ?
     fn eq(&self, other: &Vector2<T>) -> bool {
         return self.x == other.x && self.y == other.y;
     }
 }
 
-impl<T: PartialEq> Eq for Vector2<T> {}
+impl<T: Component> Eq for Vector2<T> {}
 
-impl<T: Add<Output = T> + HasNaN> Add for Vector2<T> {
+impl<T: Component> Add for Vector2<T> {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self {
+    fn add(self, other: Self) -> Self::Output {
         debug_assert!(!self.has_nan());
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
+        return Self::new(self.x + other.x, self.y + other.y);
     }
 }
 
-impl<T: Add<Output = T> + Copy> AddAssign for Vector2<T> {
+impl<T: Component> AddAssign for Vector2<T> {
     fn add_assign(&mut self, other: Self) {
-        *self = Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        };
+        debug_assert!(!other.has_nan());
+        *self = Self::new(self.x + other.x, self.y + other.y);
     }
 }
 
-impl<T: Sub<Output = T>> Sub for Vector2<T> {
+impl<T: Component> Sub for Vector2<T> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
+        debug_assert!(!other.has_nan());
+        return Self::new(self.x - other.x, self.y - other.y);
     }
 }
 
-impl<T: Sub<Output = T> + Copy> SubAssign for Vector2<T> {
+impl<T: Component> SubAssign for Vector2<T> {
     fn sub_assign(&mut self, other: Self) {
-        *self = Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
+        debug_assert!(!other.has_nan());
+        *self = Self::new(self.x - other.x, self.y - other.y);
+    }
+}
+
+impl<T: Component> Mul<T> for Vector2<T> {
+    type Output = Self;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        debug_assert!(!rhs.has_nan());
+        return Self::new(self.x * rhs, self.y * rhs);
+    }
+}
+
+impl<T: Component> Div<T> for Vector2<T> {
+    type Output = Self;
+
+    fn div(self, rhs: T) -> Self::Output {
+        debug_assert_ne!(rhs, T::zero());
+        let inv = T::one() / rhs;
+        return Self::new(self.x * inv, self.y * inv);
     }
 }
 
@@ -79,6 +96,22 @@ pub type Vector2i = Vector2<i32>;
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
+
+    #[test]
+    pub fn test_vector2_div_scalar() {
+        let mut left = super::Vector2f::new(2.0, 4.0);
+        left = left / 2.0_f32;
+        assert_eq!(left.x, 1.0);
+        assert_eq!(left.y, 2.0);
+    }
+
+    #[test]
+    pub fn test_vector2_mul_scalar() {
+        let mut left = super::Vector2f::new(2.0, 3.0);
+        left = left * 2.0;
+        assert_eq!(left.x, 4.0);
+        assert_eq!(left.y, 6.0);
+    }
 
     #[test]
     pub fn test_vector2_eq() {
@@ -103,7 +136,10 @@ mod tests {
 
     #[test]
     pub fn test_vector2f_nan() {
-        let vec2f = super::Vector2f::new(pbrt::Float::NAN, pbrt::Float::NAN);
+        let vec2f = super::Vector2f {
+            x: pbrt::Float::NAN,
+            y: pbrt::Float::NAN,
+        };
         assert_eq!(vec2f.has_nan(), true);
     }
 
