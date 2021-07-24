@@ -1,6 +1,8 @@
 #[cfg(PBRT_FLOAT_AS_DOUBLE)]
 pub type Float = f64;
 
+pub type Idx = i32;
+
 use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
@@ -98,6 +100,35 @@ impl One for f64 {
     }
 }
 
+
+pub trait IntoFloat  {
+    fn to_float(&self) -> Float;
+}
+
+impl IntoFloat for f32 {
+    fn to_float(&self) -> Float {
+        *self as Float
+    }
+}
+
+impl IntoFloat for f64 {
+    fn to_float(&self) -> Float {
+        *self as Float
+    }
+}
+
+impl IntoFloat for i32 {
+    fn to_float(&self) -> Float {
+        *self as Float
+    }
+}
+
+impl IntoFloat for i64 {
+    fn to_float(&self) -> Float {
+        *self as Float
+    }
+}
+
 pub trait Component:
     Sized
     + HasNaN
@@ -114,6 +145,7 @@ pub trait Component:
     + Debug
     + PartialEq
     + Copy
+    + IntoFloat
 {
 }
 

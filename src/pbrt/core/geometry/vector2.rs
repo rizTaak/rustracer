@@ -6,6 +6,7 @@ use core::ops::Add;
 use core::ops::AddAssign;
 use core::ops::Div;
 use core::ops::DivAssign;
+use core::ops::Index;
 use core::ops::Mul;
 use core::ops::MulAssign;
 use core::ops::Sub;
@@ -22,6 +23,15 @@ impl<T: Component> Vector2<T> {
         debug_assert!(!x.has_nan());
         debug_assert!(!y.has_nan());
         Self { x: x, y: y }
+    }
+
+    pub fn length_squared(&self) -> pbrt::Float {
+        let squared = self.x * self.x + self.y * self.y;
+        squared.to_float()
+    }
+
+    pub fn length(&self) -> pbrt::Float {
+        self.length_squared().sqrt()
     }
 }
 
@@ -40,6 +50,8 @@ impl<T: Component> PartialEq for Vector2<T> {
 
 impl<T: Component> Eq for Vector2<T> {}
 
+
+// todo: reference or direct value
 impl<T: Component> Add for Vector2<T> {
     type Output = Self;
 
@@ -105,16 +117,44 @@ impl<T: Component> DivAssign<T> for Vector2<T> {
     }
 }
 
+impl<T: Component> Index<pbrt::Idx> for Vector2<T> {
+    type Output = T;
+
+    fn index(&self, idx: pbrt::Idx) -> &Self::Output {
+        debug_assert!(0 <= idx && idx <= 1);
+        match idx {
+            0 => &self.x,
+            1 => &self.y,
+            _ => panic!("index {} to access vector2 component", idx),
+        }
+    }
+}
+
 #[allow(dead_code)]
 pub type Vector2f = Vector2<pbrt::Float>;
 #[allow(dead_code)]
 pub type Vector2i = Vector2<i32>;
 
-
 #[cfg(test)]
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
+
+    #[test]
+    pub fn tst_vector2_chain() {
+        let left = super::Vector2f::new(3.0, 6.0);
+        let right = super::Vector2f::new(3.0, 6.0);
+        let result = ((left + right) / 3.0 ) * 0.5;
+        assert_eq!(result.x, 1.0);
+        assert_eq!(result.y, 2.0);
+    }
+
+    #[test]
+    pub fn test_vector2_lenght() {
+        let left = super::Vector2f::new(3.0, 4.0);
+        let length = left.length();
+        assert_eq!(length, 5.0)
+    }
 
     #[test]
     pub fn test_vector2i_basic() {
@@ -123,6 +163,14 @@ mod tests {
         let sum = left + right;
         assert_eq!(sum.x, 4);
         assert_eq!(sum.y, 6);
+    }
+
+
+    #[test]
+    pub fn test_vector2_idx() {
+        let left = super::Vector2f::new(2.0, 4.0);
+        assert_eq!(left[0], 2.0);
+        assert_eq!(left[1], 4.0);
     }
 
     #[test]
