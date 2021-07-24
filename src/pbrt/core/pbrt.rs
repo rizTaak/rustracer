@@ -6,8 +6,10 @@ use core::ops::Add;
 use core::ops::AddAssign;
 use core::ops::Div;
 use core::ops::Mul;
+use core::ops::MulAssign;
 use core::ops::Sub;
 use core::ops::SubAssign;
+use std::ops::DivAssign;
 
 #[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
 pub type Float = f32;
@@ -107,6 +109,8 @@ pub trait Component:
     + Div<Output = Self>
     + AddAssign
     + SubAssign
+    + MulAssign
+    + DivAssign
     + Debug
     + PartialEq
     + Copy

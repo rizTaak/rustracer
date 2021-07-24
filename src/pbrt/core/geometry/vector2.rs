@@ -5,7 +5,9 @@ use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
 use core::ops::Div;
+use core::ops::DivAssign;
 use core::ops::Mul;
+use core::ops::MulAssign;
 use core::ops::Sub;
 use core::ops::SubAssign;
 
@@ -79,6 +81,13 @@ impl<T: Component> Mul<T> for Vector2<T> {
     }
 }
 
+impl<T: Component> MulAssign<T> for Vector2<T> {
+    fn mul_assign(&mut self, rhs: T) {
+        debug_assert!(!rhs.has_nan());
+        *self = Self::new(self.x * rhs, self.y * rhs);
+    }
+}
+
 impl<T: Component> Div<T> for Vector2<T> {
     type Output = Self;
 
@@ -89,13 +98,48 @@ impl<T: Component> Div<T> for Vector2<T> {
     }
 }
 
+impl<T: Component> DivAssign<T> for Vector2<T> {
+    fn div_assign(&mut self, rhs: T) {
+        debug_assert!(!rhs.has_nan());
+        *self = Self::new(self.x / rhs, self.y / rhs);
+    }
+}
+
+#[allow(dead_code)]
 pub type Vector2f = Vector2<pbrt::Float>;
+#[allow(dead_code)]
 pub type Vector2i = Vector2<i32>;
+
 
 #[cfg(test)]
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
+
+    #[test]
+    pub fn test_vector2i_basic() {
+        let left = super::Vector2i::new(1, 2);
+        let right = super::Vector2i::new(3, 4);
+        let sum = left + right;
+        assert_eq!(sum.x, 4);
+        assert_eq!(sum.y, 6);
+    }
+
+    #[test]
+    pub fn test_vector2_div_assign_scalar() {
+        let mut left = super::Vector2f::new(2.0, 4.0);
+        left /= 2.0_f32;
+        assert_eq!(left.x, 1.0);
+        assert_eq!(left.y, 2.0);
+    }
+
+    #[test]
+    pub fn test_vector2_mul_assign_scalar() {
+        let mut left = super::Vector2f::new(2.0, 3.0);
+        left *= 2.0_f32;
+        assert_eq!(left.x, 4.0);
+        assert_eq!(left.y, 6.0);
+    }
 
     #[test]
     pub fn test_vector2_div_scalar() {
