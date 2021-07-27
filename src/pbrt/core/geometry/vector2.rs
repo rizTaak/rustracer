@@ -9,6 +9,7 @@ use core::ops::DivAssign;
 use core::ops::Index;
 use core::ops::Mul;
 use core::ops::MulAssign;
+use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
 
@@ -25,11 +26,13 @@ impl<T: Component> Vector2<T> {
         Self { x: x, y: y }
     }
 
+    #[allow(dead_code)]
     pub fn length_squared(&self) -> pbrt::Float {
         let squared = self.x * self.x + self.y * self.y;
         squared.to_float()
     }
 
+    #[allow(dead_code)]
     pub fn length(&self) -> pbrt::Float {
         self.length_squared().sqrt()
     }
@@ -43,44 +46,44 @@ impl<T: Component> HasNaN for Vector2<T> {
 
 impl<T: Component> PartialEq for Vector2<T> {
     // todo: with floats nan != nan ?
-    fn eq(&self, other: &Vector2<T>) -> bool {
-        return self.x == other.x && self.y == other.y;
+    fn eq(&self, rhs: &Vector2<T>) -> bool {
+        return self.x == rhs.x && self.y == rhs.y;
     }
 }
 
-impl<T: Component> Eq for Vector2<T> {}
-
+// todo: not sure
+//impl<T: Component> Eq for Vector2<T> {}
 
 // todo: reference or direct value
 impl<T: Component> Add for Vector2<T> {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self::Output {
+    fn add(self, rhs: Self) -> Self::Output {
         debug_assert!(!self.has_nan());
-        return Self::new(self.x + other.x, self.y + other.y);
+        return Self::new(self.x + rhs.x, self.y + rhs.y);
     }
 }
 
 impl<T: Component> AddAssign for Vector2<T> {
-    fn add_assign(&mut self, other: Self) {
-        debug_assert!(!other.has_nan());
-        *self = Self::new(self.x + other.x, self.y + other.y);
+    fn add_assign(&mut self, rhs: Self) {
+        debug_assert!(!rhs.has_nan());
+        *self = Self::new(self.x + rhs.x, self.y + rhs.y);
     }
 }
 
 impl<T: Component> Sub for Vector2<T> {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self {
-        debug_assert!(!other.has_nan());
-        return Self::new(self.x - other.x, self.y - other.y);
+    fn sub(self, rhs: Self) -> Self {
+        debug_assert!(!rhs.has_nan());
+        return Self::new(self.x - rhs.x, self.y - rhs.y);
     }
 }
 
 impl<T: Component> SubAssign for Vector2<T> {
-    fn sub_assign(&mut self, other: Self) {
-        debug_assert!(!other.has_nan());
-        *self = Self::new(self.x - other.x, self.y - other.y);
+    fn sub_assign(&mut self, rhs: Self) {
+        debug_assert!(!rhs.has_nan());
+        *self = Self::new(self.x - rhs.x, self.y - rhs.y);
     }
 }
 
@@ -117,6 +120,13 @@ impl<T: Component> DivAssign<T> for Vector2<T> {
     }
 }
 
+impl<T: Component> Neg for Vector2<T> {
+    type Output = Self;
+    fn neg(self) -> Self {
+        return Self::new(-self.x, -self.y);
+    }
+}
+
 impl<T: Component> Index<pbrt::Idx> for Vector2<T> {
     type Output = T;
 
@@ -144,13 +154,13 @@ mod tests {
     pub fn tst_vector2_chain() {
         let left = super::Vector2f::new(3.0, 6.0);
         let right = super::Vector2f::new(3.0, 6.0);
-        let result = ((left + right) / 3.0 ) * 0.5;
+        let result = ((left + right) / 3.0) * 0.5;
         assert_eq!(result.x, 1.0);
         assert_eq!(result.y, 2.0);
     }
 
     #[test]
-    pub fn test_vector2_lenght() {
+    pub fn test_vector2_length() {
         let left = super::Vector2f::new(3.0, 4.0);
         let length = left.length();
         assert_eq!(length, 5.0)
@@ -164,7 +174,6 @@ mod tests {
         assert_eq!(sum.x, 4);
         assert_eq!(sum.y, 6);
     }
-
 
     #[test]
     pub fn test_vector2_idx() {
@@ -277,5 +286,13 @@ mod tests {
         let result = left - right;
         assert_eq!(result.x, 1.0);
         assert_eq!(result.y, 2.0);
+    }
+
+    #[test]
+    pub fn test_vector2f_neg() {
+        let left = super::Vector2f::new(3.0, 6.0);
+        let neg = -left;
+        assert_eq!(neg.x, -3.0);
+        assert_eq!(neg.y, -6.0);
     }
 }

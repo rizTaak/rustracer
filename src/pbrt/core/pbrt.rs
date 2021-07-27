@@ -9,6 +9,7 @@ use core::ops::AddAssign;
 use core::ops::Div;
 use core::ops::Mul;
 use core::ops::MulAssign;
+use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
 use std::ops::DivAssign;
@@ -100,8 +101,7 @@ impl One for f64 {
     }
 }
 
-
-pub trait IntoFloat  {
+pub trait IntoFloat {
     fn to_float(&self) -> Float;
 }
 
@@ -146,6 +146,7 @@ pub trait Component:
     + PartialEq
     + Copy
     + IntoFloat
+    + Neg<Output = Self>
 {
 }
 
