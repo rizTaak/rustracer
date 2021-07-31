@@ -1,6 +1,9 @@
 #[cfg(PBRT_FLOAT_AS_DOUBLE)]
 pub type Float = f64;
 
+#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
+pub type Float = f32;
+
 pub type Idx = i32;
 
 use core::fmt::Debug;
@@ -13,9 +16,6 @@ use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
 use std::ops::DivAssign;
-
-#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
-pub type Float = f32;
 
 pub trait HasNaN {
     fn has_nan(&self) -> bool;
