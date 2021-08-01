@@ -111,6 +111,15 @@ impl<T: Component> Sub for Point2<T> {
     }
 }
 
+impl<T: Component> Sub for &Point2<T> {
+    type Output = Vector2<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        debug_assert!(!rhs.has_nan());
+        Self::Output::new(self.x - rhs.x, self.y - rhs.y)
+    }
+}
+
 impl<T: Component> Neg for Point2<T> {
     type Output = Self;
     fn neg(self) -> Self {
@@ -166,9 +175,19 @@ impl<T: Component> Index<pbrt::Idx> for Point2<T> {
         match idx {
             0 => &self.x,
             1 => &self.y,
-            _ => panic!("index {} to access vector2 component", idx),
+            _ => panic!("index {} is used to access point2 component", idx),
         }
     }
+}
+
+#[allow(dead_code)]
+pub fn distance<T: Component>(left: &Point2<T>, right: &Point2<T>) -> pbrt::Float {
+    (left - right).length()
+}
+
+#[allow(dead_code)]
+pub fn distance_squared<T: Component>(left: &Point2<T>, right: &Point2<T>) -> pbrt::Float {
+    (left - right).length_squared()
 }
 
 // todo: not sure
@@ -184,9 +203,43 @@ pub type Point2i = Point2<i32>;
 #[cfg(test)]
 mod tests {
     use crate::pbrt;
+    use crate::pbrt::distance;
+    use crate::pbrt::distance_squared;
     use crate::pbrt::HasNaN;
     use crate::pbrt::Point2f;
     use crate::pbrt::Vector2f;
+
+    #[test]
+    #[should_panic]
+    pub fn test_point2_idx_panic() {
+        let pt = Point2f::new(2.0, 4.0);
+        let _value = pt[3];
+    }
+
+    #[test]
+    pub fn test_vector2_distance() {
+        let start = Point2f::new(2.0, 4.0);
+        let end = Point2f::new(2.0, 0.0);
+        let dist = distance(&start, &end);
+        assert_eq!(dist, 4.0);
+    }
+
+    #[test]
+    pub fn test_vector2_distance_squared() {
+        let start = Point2f::new(2.0, 4.0);
+        let end = Point2f::new(2.0, 0.0);
+        let dist = distance_squared(&start, &end);
+        assert_eq!(dist, 16.0);
+    }
+
+    #[test]
+    pub fn test_point2_addref_vector2() {
+        let mut pt = Point2f::new(2.0, 4.0);
+        let vec = Vector2f::new(3.0, 5.0);
+        pt += vec;
+        assert_eq!(pt.x, 5.0);
+        assert_eq!(pt.y, 9.0);
+    }
 
     #[test]
     pub fn test_point2_addassign_vector2() {
