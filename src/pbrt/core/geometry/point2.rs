@@ -185,7 +185,51 @@ pub type Point2i = Point2<i32>;
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
+    use crate::pbrt::Point2f;
     use crate::pbrt::Vector2f;
+
+    #[test]
+    pub fn test_point2_addassign_vector2() {
+        let mut pt = Point2f::new(2.0, 4.0);
+        let vec = Vector2f::new(3.0, 5.0);
+        pt += vec;
+        assert_eq!(pt.x, 5.0);
+        assert_eq!(pt.y, 9.0);
+    }
+
+    #[test]
+    pub fn test_point2_add_vector2() {
+        let pt = Point2f::new(2.0, 4.0);
+        let vec = Vector2f::new(3.0, 5.0);
+        let result = pt + vec;
+        assert_eq!(result.x, 5.0);
+        assert_eq!(result.y, 9.0);
+    }
+
+    #[test]
+    pub fn test_point2_vector2() {
+        let pt = Point2f::new(2.0, 4.0);
+        let vec = Vector2f::from(pt);
+        assert_eq!(vec.x, 2.0);
+        assert_eq!(vec.y, 4.0);
+    }
+
+    #[test]
+    pub fn test_vector2_point2() {
+        let vec = Vector2f::new(2.0, 4.0);
+        let pt = Point2f::from(vec);
+        assert_eq!(pt.x, 2.0);
+        assert_eq!(pt.y, 4.0);
+    }
+
+    #[test]
+    pub fn test_point2_sub_vector() {
+        let left = super::Point2f::new(3.0, 6.0);
+        let right = Vector2f::new(2.0, 4.0);
+        let result = left - right;
+        assert_eq!(result.x, 1.0);
+        assert_eq!(result.y, 2.0);
+    }
 
     #[test]
     pub fn test_point2_chain() {
