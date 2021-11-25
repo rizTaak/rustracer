@@ -1,4 +1,3 @@
-use crate::pbrt::{Scalar, Float, Int, One, HasNaN, Vector2};
 use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
@@ -10,6 +9,8 @@ use core::ops::MulAssign;
 use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
+
+use crate::pbrt::{Float, HasNaN, Int, One, Scalar, Vector2};
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Point2<T> {
@@ -190,12 +191,12 @@ impl<T: Scalar> Index<Int> for Point2<T> {
 
 
 #[allow(dead_code)]
-pub fn distance<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
+pub fn distance2<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
     (left - right).length()
 }
 
 #[allow(dead_code)]
-pub fn distance_squared<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
+pub fn distance2_squared<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
     (left - right).length_squared()
 }
 
@@ -216,40 +217,34 @@ pub type Point2i = Point2<i32>;
 
 #[cfg(test)]
 mod tests {
-    use crate::pbrt;
-    use crate::pbrt::distance;
-    use crate::pbrt::distance_squared;
-    use crate::pbrt::HasNaN;
-    use crate::pbrt::Point2f;
-    use crate::pbrt::Vector2f;
-    use crate::pbrt::Float;
+    use crate::pbrt::{Float, HasNaN, Vector2f};
 
     #[test]
     #[should_panic]
     pub fn test_point2_idx_panic() {
-        let pt = Point2f::new(2.0, 4.0);
+        let pt = super::Point2f::new(2.0, 4.0);
         let _value = pt[3];
     }
 
     #[test]
     pub fn test_point2_distance() {
-        let start = Point2f::new(2.0, 4.0);
-        let end = Point2f::new(2.0, 0.0);
-        let dist = distance(&start, &end);
+        let start = super::Point2f::new(2.0, 4.0);
+        let end = super::Point2f::new(2.0, 0.0);
+        let dist = super::distance2(&start, &end);
         assert_eq!(dist, 4.0);
     }
 
     #[test]
     pub fn test_point2_distance_squared() {
-        let start = Point2f::new(2.0, 4.0);
-        let end = Point2f::new(2.0, 0.0);
-        let dist = distance_squared(&start, &end);
+        let start = super::Point2f::new(2.0, 4.0);
+        let end = super::Point2f::new(2.0, 0.0);
+        let dist = super::distance2_squared(&start, &end);
         assert_eq!(dist, 16.0);
     }
 
     #[test]
     pub fn test_point2_scalar_mul() {
-        let start = Point2f::new(2.0, 4.0);
+        let start = super::Point2f::new(2.0, 4.0);
         let result = start * 2.0;
         assert_eq!(result.x, 4.0);
         assert_eq!(result.y, 8.0);
@@ -257,7 +252,7 @@ mod tests {
 
     #[test]
     pub fn test_point2_addref_vector2() {
-        let mut pt = Point2f::new(2.0, 4.0);
+        let mut pt = super::Point2f::new(2.0, 4.0);
         let vec = Vector2f::new(3.0, 5.0);
         pt += vec;
         assert_eq!(pt.x, 5.0);
@@ -266,7 +261,7 @@ mod tests {
 
     #[test]
     pub fn test_point2_addassign_vector2() {
-        let mut pt = Point2f::new(2.0, 4.0);
+        let mut pt = super::Point2f::new(2.0, 4.0);
         let vec = Vector2f::new(3.0, 5.0);
         pt += vec;
         assert_eq!(pt.x, 5.0);
@@ -275,7 +270,7 @@ mod tests {
 
     #[test]
     pub fn test_point2_add_vector2() {
-        let pt = Point2f::new(2.0, 4.0);
+        let pt = super::Point2f::new(2.0, 4.0);
         let vec = Vector2f::new(3.0, 5.0);
         let result = pt + vec;
         assert_eq!(result.x, 5.0);
@@ -284,7 +279,7 @@ mod tests {
 
     #[test]
     pub fn test_point2_vector2() {
-        let pt = Point2f::new(2.0, 4.0);
+        let pt = super::Point2f::new(2.0, 4.0);
         let vec = Vector2f::from(pt);
         assert_eq!(vec.x, 2.0);
         assert_eq!(vec.y, 4.0);
@@ -293,7 +288,7 @@ mod tests {
     #[test]
     pub fn test_vector2_point2() {
         let vec = Vector2f::new(2.0, 4.0);
-        let pt = Point2f::from(vec);
+        let pt = super::Point2f::from(vec);
         assert_eq!(pt.x, 2.0);
         assert_eq!(pt.y, 4.0);
     }
@@ -388,8 +383,8 @@ mod tests {
     #[test]
     pub fn test_point2_nan() {
         let vec2f = super::Point2f {
-            x: pbrt::Float::NAN,
-            y: pbrt::Float::NAN,
+            x: Float::NAN,
+            y: Float::NAN,
         };
         assert_eq!(vec2f.has_nan(), true);
     }

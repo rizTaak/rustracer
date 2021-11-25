@@ -1,4 +1,3 @@
-use crate::pbrt::{Scalar, Float, Int, One, HasNaN, Vector3};
 use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
@@ -10,6 +9,8 @@ use core::ops::MulAssign;
 use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
+
+use crate::pbrt::{Float, HasNaN, Int, One, Scalar, Vector3};
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Point3<T> {
@@ -23,7 +24,7 @@ impl<T: Scalar> Point3<T> {
         debug_assert!(!x.has_nan());
         debug_assert!(!y.has_nan());
         debug_assert!(!z.has_nan());
-        Self { x, y, z}
+        Self { x, y, z }
     }
 
     #[allow(dead_code)]
@@ -31,7 +32,7 @@ impl<T: Scalar> Point3<T> {
         Self {
             x: T::zero(),
             y: T::zero(),
-            z: T::zero()
+            z: T::zero(),
         }
     }
 }
@@ -151,7 +152,7 @@ impl<T: Scalar> Mul<Float> for &Point3<T> {
         debug_assert!(!rhs.has_nan());
         return Self::Output::new(T::from_float(self.x.to_float() * rhs),
                                  T::from_float(self.y.to_float() * rhs),
-                                    T::from_float(self.z.to_float() * rhs));
+                                 T::from_float(self.z.to_float() * rhs));
     }
 }
 
@@ -221,7 +222,7 @@ pub type Point2i = Point3<i32>;
 
 #[cfg(test)]
 mod tests {
-    use crate::pbrt::{HasNaN, Vector3f, Float};
+    use crate::pbrt::{Float, HasNaN, Vector3f};
 
     #[test]
     #[should_panic]
@@ -405,7 +406,7 @@ mod tests {
         let vec3f = super::Point3f {
             x: Float::NAN,
             y: Float::NAN,
-            z: Float::NAN
+            z: Float::NAN,
         };
         assert_eq!(vec3f.has_nan(), true);
     }

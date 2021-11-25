@@ -1,6 +1,3 @@
-use crate::pbrt;
-use crate::pbrt::Scalar;
-use crate::pbrt::HasNaN;
 use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
@@ -12,6 +9,8 @@ use core::ops::MulAssign;
 use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
+
+use crate::pbrt::{Float, HasNaN, Int, Scalar};
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Vector2<T> {
@@ -27,13 +26,13 @@ impl<T: Scalar> Vector2<T> {
     }
 
     #[allow(dead_code)]
-    pub fn length_squared(&self) -> pbrt::Float {
+    pub fn length_squared(&self) -> Float {
         let squared = self.x * self.x + self.y * self.y;
         squared.to_float()
     }
 
     #[allow(dead_code)]
-    pub fn length(&self) -> pbrt::Float {
+    pub fn length(&self) -> Float {
         self.length_squared().sqrt()
     }
 }
@@ -127,10 +126,10 @@ impl<T: Scalar> Neg for Vector2<T> {
     }
 }
 
-impl<T: Scalar> Index<pbrt::Int> for Vector2<T> {
+impl<T: Scalar> Index<Int> for Vector2<T> {
     type Output = T;
 
-    fn index(&self, idx: pbrt::Int) -> &Self::Output {
+    fn index(&self, idx: Int) -> &Self::Output {
         debug_assert!(0 <= idx && idx <= 1);
         match idx {
             0 => &self.x,
@@ -141,15 +140,13 @@ impl<T: Scalar> Index<pbrt::Int> for Vector2<T> {
 }
 
 #[allow(dead_code)]
-pub type Vector2f = Vector2<pbrt::Float>;
+pub type Vector2f = Vector2<Float>;
 #[allow(dead_code)]
 pub type Vector2i = Vector2<i32>;
 
 #[cfg(test)]
 mod tests {
-    use crate::pbrt;
-    use crate::pbrt::HasNaN;
-    use crate::pbrt::Float;
+    use crate::pbrt::{Float, HasNaN};
 
     #[test]
     pub fn tst_vector2_chain() {
@@ -239,8 +236,8 @@ mod tests {
     #[test]
     pub fn test_vector2f_nan() {
         let vec2f = super::Vector2f {
-            x: pbrt::Float::NAN,
-            y: pbrt::Float::NAN,
+            x: Float::NAN,
+            y: Float::NAN,
         };
         assert_eq!(vec2f.has_nan(), true);
     }

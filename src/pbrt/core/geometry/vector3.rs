@@ -1,6 +1,3 @@
-use crate::pbrt;
-use crate::pbrt::Scalar;
-use crate::pbrt::HasNaN;
 use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
@@ -12,6 +9,8 @@ use core::ops::MulAssign;
 use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
+
+use crate::pbrt::{Float, HasNaN, Int, Scalar};
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Vector3<T> {
@@ -29,13 +28,13 @@ impl<T: Scalar> Vector3<T> {
     }
 
     #[allow(dead_code)]
-    pub fn length_squared(&self) -> pbrt::Float {
+    pub fn length_squared(&self) -> Float {
         let squared = self.x * self.x + self.y * self.y + self.z * self.z;
         squared.to_float()
     }
 
     #[allow(dead_code)]
-    pub fn length(&self) -> pbrt::Float {
+    pub fn length(&self) -> Float {
         self.length_squared().sqrt()
     }
 }
@@ -124,10 +123,10 @@ impl<T: Scalar> Neg for Vector3<T> {
     }
 }
 
-impl<T: Scalar> Index<pbrt::Int> for Vector3<T> {
+impl<T: Scalar> Index<Int> for Vector3<T> {
     type Output = T;
 
-    fn index(&self, idx: pbrt::Int) -> &Self::Output {
+    fn index(&self, idx: Int) -> &Self::Output {
         debug_assert!(0 <= idx && idx <= 2);
         match idx {
             0 => &self.x,
@@ -139,15 +138,13 @@ impl<T: Scalar> Index<pbrt::Int> for Vector3<T> {
 }
 
 #[allow(dead_code)]
-pub type Vector3f = Vector3<pbrt::Float>;
+pub type Vector3f = Vector3<Float>;
 #[allow(dead_code)]
 pub type Vector3i = Vector3<i32>;
 
 #[cfg(test)]
 mod tests {
-    use crate::pbrt;
-    use crate::pbrt::HasNaN;
-    use crate::pbrt::Float;
+    use crate::pbrt::{Float, HasNaN};
 
     #[test]
     pub fn tst_vector3_chain() {
@@ -163,7 +160,7 @@ mod tests {
     pub fn test_vector3_length() {
         let left = super::Vector3f::new(3.0, 4.0, 5.0);
         let length = left.length();
-        assert_eq!(pbrt::Float::trunc(length * 1000000.0) / 1000000.0, 7.071067);
+        assert_eq!(Float::trunc(length * 100000.0) / 100000.0, 7.07106);
     }
 
     #[test]
@@ -246,9 +243,9 @@ mod tests {
     #[test]
     pub fn test_vector3f_nan() {
         let vec3f = super::Vector3f {
-            x: pbrt::Float::NAN,
-            y: pbrt::Float::NAN,
-            z: pbrt::Float::NAN,
+            x: Float::NAN,
+            y: Float::NAN,
+            z: Float::NAN,
         };
         assert_eq!(vec3f.has_nan(), true);
     }

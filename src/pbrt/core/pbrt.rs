@@ -1,7 +1,7 @@
-#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
+#[cfg(PBRT_FLOAT_AS_DOUBLE)]
 pub type Float = f64;
 
-#[cfg(PBRT_FLOAT_AS_DOUBLE)]
+#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
 pub type Float = f32;
 
 pub type Int = i32;
