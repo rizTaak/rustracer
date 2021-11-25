@@ -1,10 +1,10 @@
-#[cfg(PBRT_FLOAT_AS_DOUBLE)]
+#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
 pub type Float = f64;
 
-#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
+#[cfg(PBRT_FLOAT_AS_DOUBLE)]
 pub type Float = f32;
 
-pub type Idx = i32;
+pub type Int = i32;
 
 use core::fmt::Debug;
 use core::ops::Add;
@@ -21,27 +21,15 @@ pub trait HasNaN {
     fn has_nan(&self) -> bool;
 }
 
-impl HasNaN for i32 {
-    fn has_nan(&self) -> bool {
-        false
-    }
-}
-
-impl HasNaN for i64 {
-    fn has_nan(&self) -> bool {
-        false
-    }
-}
-
-impl HasNaN for f32 {
+impl HasNaN for Float {
     fn has_nan(&self) -> bool {
         self.is_nan()
     }
 }
 
-impl HasNaN for f64 {
+impl HasNaN for Int {
     fn has_nan(&self) -> bool {
-        self.is_nan()
+        false
     }
 }
 
@@ -49,111 +37,79 @@ pub trait Zero {
     fn zero() -> Self;
 }
 
+impl Zero for Float {
+    fn zero() -> Self { 0 as Float }
+}
+
+impl Zero for Int {
+    fn zero() -> Self { 0 as Int }
+}
+
 pub trait One {
     fn one() -> Self;
 }
 
-impl Zero for i32 {
-    fn zero() -> Self {
-        0_i32
-    }
+impl One for Float {
+    fn one() -> Self { 1 as Float }
 }
 
-impl Zero for i64 {
-    fn zero() -> Self {
-        0_i64
-    }
+impl One for Int {
+    fn one() -> Self { 1 as Int }
 }
 
-impl Zero for f32 {
-    fn zero() -> Self {
-        0.0_f32
-    }
-}
-
-impl Zero for f64 {
-    fn zero() -> Self {
-        0.0_f64
-    }
-}
-
-impl One for i32 {
-    fn one() -> Self {
-        1_i32
-    }
-}
-
-impl One for i64 {
-    fn one() -> Self {
-        1_i64
-    }
-}
-
-impl One for f32 {
-    fn one() -> Self {
-        1.0_f32
-    }
-}
-
-impl One for f64 {
-    fn one() -> Self {
-        1.0_f64
-    }
-}
 
 pub trait IntoFloat {
     fn to_float(&self) -> Float;
 }
 
-impl IntoFloat for f32 {
+impl IntoFloat for Int {
     fn to_float(&self) -> Float {
         *self as Float
     }
 }
 
-impl IntoFloat for f64 {
+impl IntoFloat for Float {
     fn to_float(&self) -> Float {
-        *self as Float
+        *self
     }
 }
 
-impl IntoFloat for i32 {
-    fn to_float(&self) -> Float {
-        *self as Float
-    }
+pub trait FromFloat {
+    fn from_float(val: Float) -> Self;
 }
 
-impl IntoFloat for i64 {
-    fn to_float(&self) -> Float {
-        *self as Float
-    }
+impl FromFloat for Float {
+    fn from_float(val: Float) -> Self { val as Self }
 }
 
-pub trait Component:
-    Sized
-    + HasNaN
-    + Zero
-    + One
-    + Add<Output = Self>
-    + Sub<Output = Self>
-    + Mul<Output = Self>
-    + Div<Output = Self>
-    + AddAssign
-    + SubAssign
-    + MulAssign
-    + DivAssign
-    + Debug
-    + PartialEq
-    + Copy
-    + IntoFloat
-    + Neg<Output = Self>
-{
+impl FromFloat for Int {
+    fn from_float(val: Float) -> Self { val as Self }
 }
 
-impl Component for f32 {}
 
-impl Component for i32 {}
+pub trait Scalar:
+Sized
++ Default
++ Clone
++ Copy
++ HasNaN
++ Zero
++ One
++ Add<Output=Self>
++ Sub<Output=Self>
++ Mul<Output=Self>
++ Div<Output=Self>
++ AddAssign
++ SubAssign
++ MulAssign
++ DivAssign
++ Debug
++ PartialEq
++ IntoFloat
++ FromFloat
++ Neg<Output=Self>
+{}
 
-impl Component for f64 {}
+impl Scalar for Int {}
 
-impl Component for i64 {}
+impl Scalar for Float {}

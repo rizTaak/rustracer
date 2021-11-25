@@ -1,5 +1,5 @@
 use crate::pbrt;
-use crate::pbrt::Component;
+use crate::pbrt::Scalar;
 use crate::pbrt::HasNaN;
 use core::fmt::Debug;
 use core::ops::Add;
@@ -20,7 +20,7 @@ pub struct Vector3<T> {
     pub z: T,
 }
 
-impl<T: Component> Vector3<T> {
+impl<T: Scalar> Vector3<T> {
     pub fn new(x: T, y: T, z: T) -> Self {
         debug_assert!(!x.has_nan());
         debug_assert!(!y.has_nan());
@@ -40,19 +40,19 @@ impl<T: Component> Vector3<T> {
     }
 }
 
-impl<T: Component> HasNaN for Vector3<T> {
+impl<T: Scalar> HasNaN for Vector3<T> {
     fn has_nan(&self) -> bool {
         return self.x.has_nan() || self.y.has_nan() || self.z.has_nan();
     }
 }
 
-impl<T: Component> PartialEq for Vector3<T> {
+impl<T: Scalar> PartialEq for Vector3<T> {
     fn eq(&self, rhs: &Vector3<T>) -> bool {
         return self.x == rhs.x && self.y == rhs.y && self.z == self.z;
     }
 }
 
-impl<T: Component> Add for Vector3<T> {
+impl<T: Scalar> Add for Vector3<T> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -61,14 +61,14 @@ impl<T: Component> Add for Vector3<T> {
     }
 }
 
-impl<T: Component> AddAssign for Vector3<T> {
+impl<T: Scalar> AddAssign for Vector3<T> {
     fn add_assign(&mut self, rhs: Self) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z);
     }
 }
 
-impl<T: Component> Sub for Vector3<T> {
+impl<T: Scalar> Sub for Vector3<T> {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
@@ -77,14 +77,14 @@ impl<T: Component> Sub for Vector3<T> {
     }
 }
 
-impl<T: Component> SubAssign for Vector3<T> {
+impl<T: Scalar> SubAssign for Vector3<T> {
     fn sub_assign(&mut self, rhs: Self) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z);
     }
 }
 
-impl<T: Component> Mul<T> for Vector3<T> {
+impl<T: Scalar> Mul<T> for Vector3<T> {
     type Output = Self;
 
     fn mul(self, rhs: T) -> Self::Output {
@@ -93,14 +93,14 @@ impl<T: Component> Mul<T> for Vector3<T> {
     }
 }
 
-impl<T: Component> MulAssign<T> for Vector3<T> {
+impl<T: Scalar> MulAssign<T> for Vector3<T> {
     fn mul_assign(&mut self, rhs: T) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x * rhs, self.y * rhs, self.z * rhs);
     }
 }
 
-impl<T: Component> Div<T> for Vector3<T> {
+impl<T: Scalar> Div<T> for Vector3<T> {
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output {
@@ -110,30 +110,30 @@ impl<T: Component> Div<T> for Vector3<T> {
     }
 }
 
-impl<T: Component> DivAssign<T> for Vector3<T> {
+impl<T: Scalar> DivAssign<T> for Vector3<T> {
     fn div_assign(&mut self, rhs: T) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x / rhs, self.y / rhs, self.z / rhs);
     }
 }
 
-impl<T: Component> Neg for Vector3<T> {
+impl<T: Scalar> Neg for Vector3<T> {
     type Output = Self;
     fn neg(self) -> Self {
         return Self::new(-self.x, -self.y, -self.z);
     }
 }
 
-impl<T: Component> Index<pbrt::Idx> for Vector3<T> {
+impl<T: Scalar> Index<pbrt::Int> for Vector3<T> {
     type Output = T;
 
-    fn index(&self, idx: pbrt::Idx) -> &Self::Output {
+    fn index(&self, idx: pbrt::Int) -> &Self::Output {
         debug_assert!(0 <= idx && idx <= 2);
         match idx {
             0 => &self.x,
             1 => &self.y,
             2 => &self.z,
-            _ => panic!("index {} to access Vector3 component", idx),
+            _ => panic!("index {} to access Vector3 Scalar", idx),
         }
     }
 }
@@ -147,6 +147,7 @@ pub type Vector3i = Vector3<i32>;
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
+    use crate::pbrt::Float;
 
     #[test]
     pub fn tst_vector3_chain() {
@@ -162,7 +163,7 @@ mod tests {
     pub fn test_vector3_length() {
         let left = super::Vector3f::new(3.0, 4.0, 5.0);
         let length = left.length();
-        assert_eq!(pbrt::Float::trunc(length * 1000000.0) / 1000000.0, 7.071068);
+        assert_eq!(pbrt::Float::trunc(length * 1000000.0) / 1000000.0, 7.071067);
     }
 
     #[test]
@@ -186,7 +187,7 @@ mod tests {
     #[test]
     pub fn test_vector3_div_assign_scalar() {
         let mut left = super::Vector3f::new(2.0, 4.0, 8.0);
-        left /= 2.0_f32;
+        left /= 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
         assert_eq!(left.z, 4.0);
@@ -195,7 +196,7 @@ mod tests {
     #[test]
     pub fn test_vector3_mul_assign_scalar() {
         let mut left = super::Vector3f::new(2.0, 3.0, 4.0);
-        left *= 2.0_f32;
+        left *= 2.0 as Float;
         assert_eq!(left.x, 4.0);
         assert_eq!(left.y, 6.0);
         assert_eq!(left.z, 8.0);
@@ -204,7 +205,7 @@ mod tests {
     #[test]
     pub fn test_vector3_div_scalar() {
         let mut left = super::Vector3f::new(2.0, 4.0, 8.0);
-        left = left / 2.0_f32;
+        left = left / 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
         assert_eq!(left.z, 4.0);

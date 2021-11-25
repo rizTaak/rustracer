@@ -1,5 +1,5 @@
 use crate::pbrt;
-use crate::pbrt::Component;
+use crate::pbrt::Scalar;
 use crate::pbrt::HasNaN;
 use core::fmt::Debug;
 use core::ops::Add;
@@ -19,7 +19,7 @@ pub struct Vector2<T> {
     pub y: T,
 }
 
-impl<T: Component> Vector2<T> {
+impl<T: Scalar> Vector2<T> {
     pub fn new(x: T, y: T) -> Self {
         debug_assert!(!x.has_nan());
         debug_assert!(!y.has_nan());
@@ -38,13 +38,13 @@ impl<T: Component> Vector2<T> {
     }
 }
 
-impl<T: Component> HasNaN for Vector2<T> {
+impl<T: Scalar> HasNaN for Vector2<T> {
     fn has_nan(&self) -> bool {
         return self.x.has_nan() || self.y.has_nan();
     }
 }
 
-impl<T: Component> PartialEq for Vector2<T> {
+impl<T: Scalar> PartialEq for Vector2<T> {
     // todo: with floats nan != nan ?
     fn eq(&self, rhs: &Vector2<T>) -> bool {
         return self.x == rhs.x && self.y == rhs.y;
@@ -55,7 +55,7 @@ impl<T: Component> PartialEq for Vector2<T> {
 //impl<T: Component> Eq for Vector2<T> {}
 
 // todo: reference or direct value
-impl<T: Component> Add for Vector2<T> {
+impl<T: Scalar> Add for Vector2<T> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -64,14 +64,14 @@ impl<T: Component> Add for Vector2<T> {
     }
 }
 
-impl<T: Component> AddAssign for Vector2<T> {
+impl<T: Scalar> AddAssign for Vector2<T> {
     fn add_assign(&mut self, rhs: Self) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x + rhs.x, self.y + rhs.y);
     }
 }
 
-impl<T: Component> Sub for Vector2<T> {
+impl<T: Scalar> Sub for Vector2<T> {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
@@ -80,14 +80,14 @@ impl<T: Component> Sub for Vector2<T> {
     }
 }
 
-impl<T: Component> SubAssign for Vector2<T> {
+impl<T: Scalar> SubAssign for Vector2<T> {
     fn sub_assign(&mut self, rhs: Self) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x - rhs.x, self.y - rhs.y);
     }
 }
 
-impl<T: Component> Mul<T> for Vector2<T> {
+impl<T: Scalar> Mul<T> for Vector2<T> {
     type Output = Self;
 
     fn mul(self, rhs: T) -> Self::Output {
@@ -96,14 +96,14 @@ impl<T: Component> Mul<T> for Vector2<T> {
     }
 }
 
-impl<T: Component> MulAssign<T> for Vector2<T> {
+impl<T: Scalar> MulAssign<T> for Vector2<T> {
     fn mul_assign(&mut self, rhs: T) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x * rhs, self.y * rhs);
     }
 }
 
-impl<T: Component> Div<T> for Vector2<T> {
+impl<T: Scalar> Div<T> for Vector2<T> {
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output {
@@ -113,24 +113,24 @@ impl<T: Component> Div<T> for Vector2<T> {
     }
 }
 
-impl<T: Component> DivAssign<T> for Vector2<T> {
+impl<T: Scalar> DivAssign<T> for Vector2<T> {
     fn div_assign(&mut self, rhs: T) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x / rhs, self.y / rhs);
     }
 }
 
-impl<T: Component> Neg for Vector2<T> {
+impl<T: Scalar> Neg for Vector2<T> {
     type Output = Self;
     fn neg(self) -> Self {
         return Self::new(-self.x, -self.y);
     }
 }
 
-impl<T: Component> Index<pbrt::Idx> for Vector2<T> {
+impl<T: Scalar> Index<pbrt::Int> for Vector2<T> {
     type Output = T;
 
-    fn index(&self, idx: pbrt::Idx) -> &Self::Output {
+    fn index(&self, idx: pbrt::Int) -> &Self::Output {
         debug_assert!(0 <= idx && idx <= 1);
         match idx {
             0 => &self.x,
@@ -149,6 +149,7 @@ pub type Vector2i = Vector2<i32>;
 mod tests {
     use crate::pbrt;
     use crate::pbrt::HasNaN;
+    use crate::pbrt::Float;
 
     #[test]
     pub fn tst_vector2_chain() {
@@ -185,7 +186,7 @@ mod tests {
     #[test]
     pub fn test_vector2_div_assign_scalar() {
         let mut left = super::Vector2f::new(2.0, 4.0);
-        left /= 2.0_f32;
+        left /= 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
     }
@@ -193,7 +194,7 @@ mod tests {
     #[test]
     pub fn test_vector2_mul_assign_scalar() {
         let mut left = super::Vector2f::new(2.0, 3.0);
-        left *= 2.0_f32;
+        left *= 2.0 as Float;
         assert_eq!(left.x, 4.0);
         assert_eq!(left.y, 6.0);
     }
@@ -201,7 +202,7 @@ mod tests {
     #[test]
     pub fn test_vector2_div_scalar() {
         let mut left = super::Vector2f::new(2.0, 4.0);
-        left = left / 2.0_f32;
+        left = left / 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
     }

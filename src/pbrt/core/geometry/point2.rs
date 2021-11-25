@@ -1,7 +1,4 @@
-use crate::pbrt;
-use crate::pbrt::Component;
-use crate::pbrt::HasNaN;
-use crate::pbrt::Vector2;
+use crate::pbrt::{Scalar, Float, Int, One, HasNaN, Vector2};
 use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
@@ -20,11 +17,11 @@ pub struct Point2<T> {
     pub y: T,
 }
 
-impl<T: Component> Point2<T> {
+impl<T: Scalar> Point2<T> {
     pub fn new(x: T, y: T) -> Self {
         debug_assert!(!x.has_nan());
         debug_assert!(!y.has_nan());
-        Self { x: x, y: y }
+        Self { x, y }
     }
 
     #[allow(dead_code)]
@@ -36,32 +33,32 @@ impl<T: Component> Point2<T> {
     }
 }
 
-impl<T: Component + From<U>, U: Component> From<Vector2<U>> for Point2<T> {
+impl<T: Scalar + From<U>, U: Scalar> From<Vector2<U>> for Point2<T> {
     fn from(item: Vector2<U>) -> Self {
         Self::new(item.x.into(), item.y.into())
     }
 }
 
-impl<T: Component + From<U>, U: Component> From<Point2<U>> for Vector2<T> {
+impl<T: Scalar + From<U>, U: Scalar> From<Point2<U>> for Vector2<T> {
     fn from(item: Point2<U>) -> Self {
         Self::new(item.x.into(), item.y.into())
     }
 }
 
-impl<T: Component> HasNaN for Point2<T> {
+impl<T: Scalar> HasNaN for Point2<T> {
     fn has_nan(&self) -> bool {
         return self.x.has_nan() || self.y.has_nan();
     }
 }
 
-impl<T: Component> PartialEq for Point2<T> {
+impl<T: Scalar> PartialEq for Point2<T> {
     // todo: with floats nan != nan ?
     fn eq(&self, rhs: &Point2<T>) -> bool {
         return self.x == rhs.x && self.y == rhs.y;
     }
 }
 
-impl<T: Component> Add<Vector2<T>> for Point2<T> {
+impl<T: Scalar> Add<Vector2<T>> for Point2<T> {
     type Output = Self;
 
     fn add(self, rhs: Vector2<T>) -> Self::Output {
@@ -70,21 +67,21 @@ impl<T: Component> Add<Vector2<T>> for Point2<T> {
     }
 }
 
-impl<T: Component> AddAssign<Vector2<T>> for Point2<T> {
+impl<T: Scalar> AddAssign<Vector2<T>> for Point2<T> {
     fn add_assign(&mut self, rhs: Vector2<T>) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x + rhs.x, self.y + rhs.y);
     }
 }
 
-impl<T: Component> AddAssign for Point2<T> {
+impl<T: Scalar> AddAssign for Point2<T> {
     fn add_assign(&mut self, rhs: Self) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x + rhs.x, self.y + rhs.y);
     }
 }
 
-impl<T: Component> Add for Point2<T> {
+impl<T: Scalar> Add for Point2<T> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -93,7 +90,7 @@ impl<T: Component> Add for Point2<T> {
     }
 }
 
-impl<T: Component> Sub<Vector2<T>> for Point2<T> {
+impl<T: Scalar> Sub<Vector2<T>> for Point2<T> {
     type Output = Self;
 
     fn sub(self, rhs: Vector2<T>) -> Self::Output {
@@ -102,7 +99,7 @@ impl<T: Component> Sub<Vector2<T>> for Point2<T> {
     }
 }
 
-impl<T: Component> Sub for Point2<T> {
+impl<T: Scalar> Sub for Point2<T> {
     type Output = Vector2<T>;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -111,7 +108,7 @@ impl<T: Component> Sub for Point2<T> {
     }
 }
 
-impl<T: Component> Sub for &Point2<T> {
+impl<T: Scalar> Sub for &Point2<T> {
     type Output = Vector2<T>;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -120,21 +117,21 @@ impl<T: Component> Sub for &Point2<T> {
     }
 }
 
-impl<T: Component> Neg for Point2<T> {
+impl<T: Scalar> Neg for Point2<T> {
     type Output = Self;
     fn neg(self) -> Self {
         return Self::new(-self.x, -self.y);
     }
 }
 
-impl<T: Component> SubAssign<Vector2<T>> for Point2<T> {
+impl<T: Scalar> SubAssign<Vector2<T>> for Point2<T> {
     fn sub_assign(&mut self, rhs: Vector2<T>) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x - rhs.x, self.y - rhs.y);
     }
 }
 
-impl<T: Component> Mul<T> for Point2<T> {
+impl<T: Scalar> Mul<T> for Point2<T> {
     type Output = Self;
 
     fn mul(self, rhs: T) -> Self::Output {
@@ -143,14 +140,25 @@ impl<T: Component> Mul<T> for Point2<T> {
     }
 }
 
-impl<T: Component> MulAssign<T> for Point2<T> {
+
+impl<T: Scalar> Mul<Float> for &Point2<T> {
+    type Output = Point2<T>;
+
+    fn mul(self, rhs: Float) -> Self::Output {
+        debug_assert!(!rhs.has_nan());
+        return Self::Output::new(T::from_float(self.x.to_float() * rhs),
+                                 T::from_float(self.y.to_float() * rhs));
+    }
+}
+
+impl<T: Scalar> MulAssign<T> for Point2<T> {
     fn mul_assign(&mut self, rhs: T) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x * rhs, self.y * rhs);
     }
 }
 
-impl<T: Component> Div<T> for Point2<T> {
+impl<T: Scalar> Div<T> for Point2<T> {
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output {
@@ -160,43 +168,49 @@ impl<T: Component> Div<T> for Point2<T> {
     }
 }
 
-impl<T: Component> DivAssign<T> for Point2<T> {
+impl<T: Scalar> DivAssign<T> for Point2<T> {
     fn div_assign(&mut self, rhs: T) {
         debug_assert!(!rhs.has_nan());
         *self = Self::new(self.x / rhs, self.y / rhs);
     }
 }
 
-impl<T: Component> Index<pbrt::Idx> for Point2<T> {
+impl<T: Scalar> Index<Int> for Point2<T> {
     type Output = T;
 
-    fn index(&self, idx: pbrt::Idx) -> &Self::Output {
+    fn index(&self, idx: Int) -> &Self::Output {
         debug_assert!(0 <= idx && idx <= 1);
         match idx {
             0 => &self.x,
             1 => &self.y,
-            _ => panic!("index {} is used to access point2 component", idx),
+            _ => panic!("index {} is used to access point2 scalar", idx),
         }
     }
 }
 
+
 #[allow(dead_code)]
-pub fn distance<T: Component>(left: &Point2<T>, right: &Point2<T>) -> pbrt::Float {
+pub fn distance<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
     (left - right).length()
 }
 
 #[allow(dead_code)]
-pub fn distance_squared<T: Component>(left: &Point2<T>, right: &Point2<T>) -> pbrt::Float {
+pub fn distance_squared<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
     (left - right).length_squared()
 }
 
+#[allow(dead_code)]
+pub fn lerp<T: Scalar>(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
+    p0 * (Float::one() - t) + p1 * t
+}
+
 // todo: not sure
-//impl<T: Component> Eq for Point2<T> {}
+//impl<T: Scalar> Eq for Point2<T> {}
 
 // todo: reference or direct value
 
 #[allow(dead_code)]
-pub type Point2f = Point2<pbrt::Float>;
+pub type Point2f = Point2<Float>;
 #[allow(dead_code)]
 pub type Point2i = Point2<i32>;
 
@@ -208,6 +222,7 @@ mod tests {
     use crate::pbrt::HasNaN;
     use crate::pbrt::Point2f;
     use crate::pbrt::Vector2f;
+    use crate::pbrt::Float;
 
     #[test]
     #[should_panic]
@@ -217,7 +232,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_vector2_distance() {
+    pub fn test_point2_distance() {
         let start = Point2f::new(2.0, 4.0);
         let end = Point2f::new(2.0, 0.0);
         let dist = distance(&start, &end);
@@ -225,11 +240,19 @@ mod tests {
     }
 
     #[test]
-    pub fn test_vector2_distance_squared() {
+    pub fn test_point2_distance_squared() {
         let start = Point2f::new(2.0, 4.0);
         let end = Point2f::new(2.0, 0.0);
         let dist = distance_squared(&start, &end);
         assert_eq!(dist, 16.0);
+    }
+
+    #[test]
+    pub fn test_point2_scalar_mul() {
+        let start = Point2f::new(2.0, 4.0);
+        let result = start * 2.0;
+        assert_eq!(result.x, 4.0);
+        assert_eq!(result.y, 8.0);
     }
 
     #[test]
@@ -312,7 +335,7 @@ mod tests {
     #[test]
     pub fn test_point2_div_assign_scalar() {
         let mut left = super::Point2f::new(2.0, 4.0);
-        left /= 2.0_f32;
+        left /= 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
     }
@@ -320,7 +343,7 @@ mod tests {
     #[test]
     pub fn test_point2_mul_assign_scalar() {
         let mut left = super::Point2f::new(2.0, 3.0);
-        left *= 2.0_f32;
+        left *= 2.0 as Float;
         assert_eq!(left.x, 4.0);
         assert_eq!(left.y, 6.0);
     }
@@ -328,7 +351,7 @@ mod tests {
     #[test]
     pub fn test_point2_div_scalar() {
         let mut left = super::Point2f::new(2.0, 4.0);
-        left = left / 2.0_f32;
+        left = left / 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
     }

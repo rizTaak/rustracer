@@ -6,3 +6,6 @@ pub use self::vector3::*;
 
 mod point2;
 pub use self::point2::*;
+
+mod point3;
+pub use self::point3::*;
