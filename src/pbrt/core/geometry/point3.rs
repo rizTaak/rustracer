@@ -27,6 +27,7 @@ impl<T: Scalar> Point3<T> {
         Self { x, y, z }
     }
 
+    // todo: remove this
     #[allow(dead_code)]
     pub fn default() -> Self {
         Self {
@@ -144,15 +145,16 @@ impl<T: Scalar> Mul<T> for Point3<T> {
     }
 }
 
-
 impl<T: Scalar> Mul<Float> for &Point3<T> {
     type Output = Point3<T>;
 
     fn mul(self, rhs: Float) -> Self::Output {
         debug_assert!(!rhs.has_nan());
-        return Self::Output::new(T::from_float(self.x.to_float() * rhs),
-                                 T::from_float(self.y.to_float() * rhs),
-                                 T::from_float(self.z.to_float() * rhs));
+        return Self::Output::new(
+            T::from_float(self.x.to_float() * rhs),
+            T::from_float(self.y.to_float() * rhs),
+            T::from_float(self.z.to_float() * rhs),
+        );
     }
 }
 
@@ -193,7 +195,6 @@ impl<T: Scalar> Index<Int> for Point3<T> {
         }
     }
 }
-
 
 #[allow(dead_code)]
 pub fn distance3<T: Scalar>(left: &Point3<T>, right: &Point3<T>) -> Float {

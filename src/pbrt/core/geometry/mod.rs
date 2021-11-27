@@ -9,3 +9,9 @@ pub use self::point2::*;
 
 mod point3;
 pub use self::point3::*;
+
+mod ray;
+pub use self::ray::*;
+
+mod medium;
+pub use self::medium::*;

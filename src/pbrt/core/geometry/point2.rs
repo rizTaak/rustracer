@@ -9,6 +9,8 @@ use core::ops::MulAssign;
 use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
+//todo: doesn't support template
+// use auto_ops::impl_op_ex_commutative;
 
 use crate::pbrt::{Float, HasNaN, Int, One, Scalar, Vector2};
 
@@ -59,6 +61,7 @@ impl<T: Scalar> PartialEq for Point2<T> {
     }
 }
 
+
 impl<T: Scalar> Add<Vector2<T>> for Point2<T> {
     type Output = Self;
 
@@ -67,6 +70,9 @@ impl<T: Scalar> Add<Vector2<T>> for Point2<T> {
         return Self::new(self.x + rhs.x, self.y + rhs.y);
     }
 }
+
+//todo:
+// impl_op_ex_commutative!(+ |a: &Point2<T>, b: &Vector2<T>| -> Point2<T> { Point2::<T>::new(a.x + b.x, a.y + b.y)});
 
 impl<T: Scalar> AddAssign<Vector2<T>> for Point2<T> {
     fn add_assign(&mut self, rhs: Vector2<T>) {
@@ -276,6 +282,16 @@ mod tests {
         assert_eq!(result.x, 5.0);
         assert_eq!(result.y, 9.0);
     }
+
+    /*
+    #[test]
+    pub fn test_vector2_add_point2() {
+        let pt = super::Point2f::new(2.0, 4.0);
+        let vec = Vector2f::new(3.0, 5.0);
+        let result = vec + pt;
+        assert_eq!(result.x, 5.0);
+        assert_eq!(result.y, 9.0);
+    }*/
 
     #[test]
     pub fn test_point2_vector2() {
