@@ -18,3 +18,6 @@ pub use self::medium::*;
 
 mod ray_differential;
 pub use self::ray_differential::*;
+
+mod bounding_box;
+pub use self::bounding_box::*;

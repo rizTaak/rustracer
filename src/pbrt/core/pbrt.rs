@@ -1,11 +1,3 @@
-#[cfg(PBRT_FLOAT_AS_DOUBLE)]
-pub type Float = f64;
-
-#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
-pub type Float = f32;
-
-pub type Int = i32;
-
 use core::fmt::Debug;
 use core::ops::Add;
 use core::ops::AddAssign;
@@ -16,6 +8,14 @@ use core::ops::Neg;
 use core::ops::Sub;
 use core::ops::SubAssign;
 use std::ops::DivAssign;
+
+#[cfg(PBRT_FLOAT_AS_DOUBLE)]
+pub type Float = f64;
+
+#[cfg(not(PBRT_FLOAT_AS_DOUBLE))]
+pub type Float = f32;
+
+pub type Int = i32;
 
 pub trait HasNaN {
     fn has_nan(&self) -> bool;
@@ -86,6 +86,45 @@ impl FromFloat for Int {
     fn from_float(val: Float) -> Self { val as Self }
 }
 
+pub trait Min: Sized + PartialOrd {
+    fn min_value() -> Self;
+
+    fn min(left: Self, right: Self) -> Self {
+        if left < right { left } else { right }
+    }
+}
+
+impl Min for Int {
+    fn min_value() -> Self {
+        Int::MIN
+    }
+}
+
+impl Min for Float {
+    fn min_value() -> Self {
+        Float::MIN
+    }
+}
+
+pub trait Max: Sized + PartialOrd {
+    fn max_value() -> Self;
+
+    fn max(left: Self, right: Self) -> Self {
+        if left > right { left } else { right }
+    }
+}
+
+impl Max for Int {
+    fn max_value() -> Self {
+        Int::MAX
+    }
+}
+
+impl Max for Float {
+    fn max_value() -> Self {
+        Float::MAX
+    }
+}
 
 pub trait Scalar:
 Sized
@@ -108,6 +147,9 @@ Sized
 + IntoFloat
 + FromFloat
 + Neg<Output=Self>
++ Min
++ Max
++ PartialOrd
 {}
 
 impl Scalar for Int {}
