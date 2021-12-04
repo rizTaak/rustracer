@@ -1,4 +1,4 @@
-use crate::pbrt::{Float, Medium, Point3f, Vector3f};
+use crate::pbrt::{Float, HasNaN, Medium, Point3f, Vector3f};
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Ray<'a> {
@@ -25,8 +25,32 @@ impl<'a> Ray<'a> {
             medium,
         }
     }
+
+    pub fn has_nan(&self) -> bool {
+        self.o.has_nan() || self.d.has_nan() || Float::is_nan(self.t_max)
+    }
 }
 
+impl<'a> FnOnce<(Float,)> for Ray<'a> {
+    type Output = Point3f;
+
+    extern "rust-call" fn call_once(self, args: (Float,)) -> Self::Output {
+        self.call(args)
+    }
+}
+
+impl<'a> FnMut<(Float,)> for Ray<'a> {
+    extern "rust-call" fn call_mut(&mut self, args: (Float,)) -> Self::Output {
+        self.call(args)
+    }
+}
+
+impl<'a> Fn<(Float,)> for Ray<'a> {
+    extern "rust-call" fn call(&self, args: (Float,)) -> Self::Output {
+        let (t,) = args;
+        self.o + self.d * t
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -34,14 +58,56 @@ mod tests {
 
     #[test]
     pub fn test_new() {
-        let ray = super::Ray::new(Point3f::new(1., 2., 3.),
-                                  Vector3f::new(4., 5., 6.),
-                                  Option::None,
-                                  Option::None, Option::None);
+        let ray = super::Ray::new(
+            Point3f::new(1., 2., 3.),
+            Vector3f::new(4., 5., 6.),
+            Option::None,
+            Option::None,
+            Option::None,
+        );
         assert_eq!(ray.o, Point3f::new(1., 2., 3.));
         assert_eq!(ray.d, Vector3f::new(4., 5., 6.));
         assert_eq!(ray.t_max, Float::INFINITY);
         assert_eq!(ray.time, Float::default());
         assert_eq!(ray.medium.is_none(), true);
+    }
+
+    #[test]
+    pub fn test_no_nan() {
+        let ray = super::Ray::new(
+            Point3f::new(1., 2., 3.),
+            Vector3f::new(4., 5., 6.),
+            Option::None,
+            Option::None,
+            Option::None,
+        );
+        assert_eq!(ray.has_nan(), false)
+    }
+
+    #[test]
+    pub fn test_has_nan() {
+        let ray = super::Ray::new(
+            Point3f::new(1., 2., 3.),
+            Vector3f::new(4., 5., 6.),
+            Option::Some(Float::NAN),
+            Option::None,
+            Option::None,
+        );
+        assert_eq!(ray.has_nan(), true)
+    }
+
+    #[test]
+    pub fn test_interpol() {
+        let ray = super::Ray::new(
+            Point3f::new(1., 2., 3.),
+            Vector3f::new(2., 2., 2.),
+            Option::None,
+            Option::None,
+            Option::None,
+        );
+        let interpol = ray(0.5);
+        assert_eq!(interpol, Point3f::new(2., 3., 4.));
+        let interpol = ray(2.0);
+        assert_eq!(interpol, Point3f::new(5., 6., 7.));
     }
 }
