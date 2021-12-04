@@ -1,6 +1,9 @@
 #![feature(unboxed_closures)]
 #![feature(fn_traits)]
 
+// todo: disable it once done coding!!
+#![cfg_attr(debug_assertions, allow(dead_code))]
+
 mod pbrt;
 
 fn main() {

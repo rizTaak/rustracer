@@ -15,3 +15,6 @@ pub use self::ray::*;
 
 mod medium;
 pub use self::medium::*;
+
+mod ray_differential;
+pub use self::ray_differential::*;
