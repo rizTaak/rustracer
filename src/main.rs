@@ -11,4 +11,6 @@ fn main() {
     let vec3 = pbrt::Vector3f::new(3.0, 4.0, 5.0);
     println!("{:?}", vec2);
     println!("{:?}", vec3);
+    let bb2 = pbrt::Bounds2::<pbrt::Float>::from_pts(Default::default(), Default::default());
+    println!("{:?}", bb2);
 }
