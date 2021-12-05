@@ -54,7 +54,7 @@ impl<T: Scalar> Index<Int> for Bounds2<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::pbrt::{Float, Max, Min};
+    use crate::pbrt::{Float, Max, Min, Point2};
 
     #[test]
     pub fn test_bounds_new() {
@@ -64,4 +64,60 @@ mod tests {
         assert_eq!(pt.p_max.x, Float::min_value());
         assert_eq!(pt.p_max.y, Float::min_value());
     }
+
+    #[test]
+    pub fn test_from_pts() {
+        let pt1 = Point2::<Float>::new(1.0, 11.0);
+        let pt2 = Point2::<Float>::new(12.0, 2.0);
+        let bound = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        assert_eq!(bound.p_min, Point2::<Float>::new(1.0, 2.0));
+        assert_eq!(bound.p_max, Point2::<Float>::new(12.0, 11.0));
+    }
+
+    #[test]
+    pub fn test_diagnol() {
+        let pt1 = Point2::<Float>::new(1.0, 11.0);
+        let pt2 = Point2::<Float>::new(12.0, 2.0);
+        let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        let diag = b.diagonal();
+        assert_eq!(diag.x, 11.0);
+        assert_eq!(diag.y, 9.0);
+    }
+
+    #[test]
+    pub fn test_area() {
+        let pt1 = Point2::<Float>::new(1.0, 11.0);
+        let pt2 = Point2::<Float>::new(12.0, 2.0);
+        let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        let area = b.area();
+        assert_eq!(area, 9.0*11.0);
+    }
+
+    #[test]
+    pub fn test_max_extent_0() {
+        let pt1 = Point2::<Float>::new(1.0, 11.0);
+        let pt2 = Point2::<Float>::new(12.0, 2.0);
+        let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        let extent = b.maximum_extent();
+        assert_eq!(extent, 0);
+    }
+
+    #[test]
+    pub fn test_max_extent_1() {
+        let pt1 = Point2::<Float>::new(2.0, 12.0);
+        let pt2 = Point2::<Float>::new(11.0, 1.0);
+        let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        let extent = b.maximum_extent();
+        assert_eq!(extent, 1);
+    }
+
+    #[test]
+    pub fn test_idx() {
+        let pt1 = Point2::<Float>::new(1.0, 11.0);
+        let pt2 = Point2::<Float>::new(12.0, 2.0);
+        let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        assert_eq!(b[0], Point2::<Float>::new(1.0, 2.0));
+        assert_eq!(b[1], Point2::<Float>::new(12.0, 11.0));
+    }
+
 }
