@@ -34,15 +34,15 @@ impl<T: Scalar> Point2<T> {
         }
     }
 
-    fn distance(left: &Point2<T>, right: &Point2<T>) -> Float {
+    pub fn distance(left: &Point2<T>, right: &Point2<T>) -> Float {
         (left - right).length()
     }
 
-    fn distance_squared(left: &Point2<T>, right: &Point2<T>) -> Float {
+    pub fn distance_squared(left: &Point2<T>, right: &Point2<T>) -> Float {
         (left - right).length_squared()
     }
 
-    fn lerp(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
+    pub fn lerp(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
         p0 * (Float::one() - t) + p1 * t
     }
 }
