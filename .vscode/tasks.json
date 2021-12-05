@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Coverge",
+      "command": "tarpaulin",
+      "type": "cargo",
+      "args": [
+        "--ignore-tests",
+        "--out",
+        "Lcov",
+        "--output-dir",
+        "target/tarpaulin/"
+      ],
+      "detail": "Rust code coverage"
+    }
+  ]
+}
