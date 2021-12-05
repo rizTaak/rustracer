@@ -138,4 +138,14 @@ mod tests {
         let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
         assert_eq!(b[2], Point2::<Float>::new(1.0, 2.0));
     }
+
+    #[test]
+    pub fn test_lerp() {
+        let pt1 = Point2::<Float>::new(5.0, 1.0);
+        let pt2 = Point2::<Float>::new(10.0, 10.0);
+        let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        let l = b.lerp(&Point2::<Float>::new(0.5, 0.5));
+        assert_eq!(l.x, 7.5);
+        assert_eq!(l.y, 5.5);
+    }
 }
