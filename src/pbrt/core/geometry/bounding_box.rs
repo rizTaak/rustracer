@@ -120,4 +120,13 @@ mod tests {
         assert_eq!(b[1], Point2::<Float>::new(12.0, 11.0));
     }
 
+    #[test]
+    #[should_panic]
+    pub fn test_idx_panic() {
+        let pt1 = Point2::<Float>::new(1.0, 11.0);
+        let pt2 = Point2::<Float>::new(12.0, 2.0);
+        let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
+        assert_eq!(b[2], Point2::<Float>::new(1.0, 2.0));
+    }
+
 }
