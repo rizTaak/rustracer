@@ -27,12 +27,23 @@ impl<T: Scalar> Point2<T> {
         Self { x, y }
     }
 
-    #[allow(dead_code)]
     pub fn default() -> Self {
         Self {
             x: T::zero(),
             y: T::zero(),
         }
+    }
+
+    fn distance(left: &Point2<T>, right: &Point2<T>) -> Float {
+        (left - right).length()
+    }
+
+    fn distance_squared(left: &Point2<T>, right: &Point2<T>) -> Float {
+        (left - right).length_squared()
+    }
+
+    fn lerp(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
+        p0 * (Float::one() - t) + p1 * t
     }
 }
 
@@ -195,18 +206,6 @@ impl<T: Scalar> Index<Int> for Point2<T> {
     }
 }
 
-pub fn distance2<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
-    (left - right).length()
-}
-
-pub fn distance2_squared<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
-    (left - right).length_squared()
-}
-
-pub fn lerp2<T: Scalar>(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
-    p0 * (Float::one() - t) + p1 * t
-}
-
 // todo: not sure
 //impl<T: Scalar> Eq for Point2<T> {}
 
@@ -231,7 +230,7 @@ mod tests {
     pub fn test_point2_distance() {
         let start = super::Point2f::new(2.0, 4.0);
         let end = super::Point2f::new(2.0, 0.0);
-        let dist = super::distance2(&start, &end);
+        let dist = super::Point2f::distance(&start, &end);
         assert_eq!(dist, 4.0);
     }
 
@@ -239,7 +238,7 @@ mod tests {
     pub fn test_point2_distance_squared() {
         let start = super::Point2f::new(2.0, 4.0);
         let end = super::Point2f::new(2.0, 0.0);
-        let dist = super::distance2_squared(&start, &end);
+        let dist = super::Point2f::distance_squared(&start, &end);
         assert_eq!(dist, 16.0);
     }
 

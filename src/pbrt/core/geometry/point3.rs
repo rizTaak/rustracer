@@ -28,13 +28,24 @@ impl<T: Scalar> Point3<T> {
     }
 
     // todo: remove this
-    #[allow(dead_code)]
     pub fn default() -> Self {
         Self {
             x: T::zero(),
             y: T::zero(),
             z: T::zero(),
         }
+    }
+
+    fn distance(left: &Point3<T>, right: &Point3<T>) -> Float {
+        (left - right).length()
+    }
+
+    fn distance_squared(left: &Point3<T>, right: &Point3<T>) -> Float {
+        (left - right).length_squared()
+    }
+
+    fn lerp(t: Float, p0: &Point3<T>, p1: &Point3<T>) -> Point3<T> {
+        p0 * (Float::one() - t) + p1 * t
     }
 }
 
@@ -196,29 +207,12 @@ impl<T: Scalar> Index<Int> for Point3<T> {
     }
 }
 
-#[allow(dead_code)]
-pub fn distance3<T: Scalar>(left: &Point3<T>, right: &Point3<T>) -> Float {
-    (left - right).length()
-}
-
-#[allow(dead_code)]
-pub fn distance3_squared<T: Scalar>(left: &Point3<T>, right: &Point3<T>) -> Float {
-    (left - right).length_squared()
-}
-
-#[allow(dead_code)]
-pub fn lerp3<T: Scalar>(t: Float, p0: &Point3<T>, p1: &Point3<T>) -> Point3<T> {
-    p0 * (Float::one() - t) + p1 * t
-}
-
 // todo: not sure
 //impl<T: Scalar> Eq for Point3<T> {}
 
 // todo: reference or direct value
 
-#[allow(dead_code)]
 pub type Point3f = Point3<Float>;
-#[allow(dead_code)]
 pub type Point2i = Point3<i32>;
 
 #[cfg(test)]
@@ -236,7 +230,7 @@ mod tests {
     pub fn test_point3_distance() {
         let start = super::Point3f::new(2.0, 4.0, 8.0);
         let end = super::Point3f::new(2.0, 4.0, 0.0);
-        let dist = super::distance3(&start, &end);
+        let dist = super::Point3f::distance(&start, &end);
         assert_eq!(dist, 8.0);
     }
 
@@ -244,7 +238,7 @@ mod tests {
     pub fn test_point3_distance_squared() {
         let start = super::Point3f::new(2.0, 4.0, 8.0);
         let end = super::Point3f::new(2.0, 4.0, 0.0);
-        let dist = super::distance3_squared(&start, &end);
+        let dist = super::Point3f::distance_squared(&start, &end);
         assert_eq!(dist, 64.0);
     }
 

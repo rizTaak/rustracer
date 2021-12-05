@@ -10,12 +10,10 @@ pub struct Ray<'a> {
 }
 
 impl<'a> Ray<'a> {
-    #[allow(dead_code)]
     pub fn from_od(o: &Point3f, d: &Vector3f) -> Self {
         Self::new(o, d, None, None, None)
     }
 
-    #[allow(dead_code)]
     pub fn new(
         o: &Point3f,
         d: &Vector3f,
@@ -32,7 +30,6 @@ impl<'a> Ray<'a> {
         }
     }
 
-    #[allow(dead_code)]
     pub fn has_nan(&self) -> bool {
         self.o.has_nan() || self.d.has_nan() || Float::is_nan(self.t_max)
     }

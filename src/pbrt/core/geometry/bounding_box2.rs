@@ -47,6 +47,25 @@ impl<T: Scalar> Bounds2<T> {
             T::from_float(lerp(t.y, self.p_min.y.to_float(), self.p_max.y.to_float())),
         )
     }
+
+    pub fn offset(&self, p: Point2<T>) -> Vector2<T> {
+        let mut o = p - self.p_min;
+        if self.p_max.x > self.p_min.x {
+            o.x /= self.p_max.x - self.p_min.x;
+        }
+        if self.p_max.y > self.p_min.y {
+            o.y /= self.p_max.y - self.p_min.y;
+        }
+        return o;
+    }
+
+    pub fn inside(p: Point2<T>, b: Bounds2<T>) -> bool {
+        p.x >= b.p_min.x && p.x <= b.p_max.x && p.y >= b.p_min.y && p.y <= b.p_max.y
+    }
+
+    pub fn inside_exclusive(p: Point2<T>, b: Bounds2<T>) -> bool {
+        p.x >= b.p_min.x && p.x < b.p_max.x && p.y >= b.p_min.y && p.y < b.p_max.y
+    }
 }
 
 impl<T: Scalar> Index<Int> for Bounds2<T> {

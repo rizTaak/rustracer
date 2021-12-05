@@ -25,13 +25,11 @@ impl<T: Scalar> Vector2<T> {
         Self { x: x, y: y }
     }
 
-    #[allow(dead_code)]
     pub fn length_squared(&self) -> Float {
         let squared = self.x * self.x + self.y * self.y;
         squared.to_float()
     }
 
-    #[allow(dead_code)]
     pub fn length(&self) -> Float {
         self.length_squared().sqrt()
     }
@@ -139,9 +137,7 @@ impl<T: Scalar> Index<Int> for Vector2<T> {
     }
 }
 
-#[allow(dead_code)]
 pub type Vector2f = Vector2<Float>;
-#[allow(dead_code)]
 pub type Vector2i = Vector2<i32>;
 
 #[cfg(test)]

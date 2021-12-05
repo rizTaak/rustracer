@@ -27,13 +27,11 @@ impl<T: Scalar> Vector3<T> {
         Self { x: x, y: y, z: z }
     }
 
-    #[allow(dead_code)]
     pub fn length_squared(&self) -> Float {
         let squared = self.x * self.x + self.y * self.y + self.z * self.z;
         squared.to_float()
     }
 
-    #[allow(dead_code)]
     pub fn length(&self) -> Float {
         self.length_squared().sqrt()
     }
@@ -137,9 +135,7 @@ impl<T: Scalar> Index<Int> for Vector3<T> {
     }
 }
 
-#[allow(dead_code)]
 pub type Vector3f = Vector3<Float>;
-#[allow(dead_code)]
 pub type Vector3i = Vector3<i32>;
 
 #[cfg(test)]
