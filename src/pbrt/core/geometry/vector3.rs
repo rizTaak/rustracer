@@ -41,13 +41,13 @@ impl<T: Scalar> Vector3<T> {
 
 impl<T: Scalar> HasNaN for Vector3<T> {
     fn has_nan(&self) -> bool {
-        return self.x.has_nan() || self.y.has_nan() || self.z.has_nan();
+        self.x.has_nan() || self.y.has_nan() || self.z.has_nan()
     }
 }
 
 impl<T: Scalar> PartialEq for Vector3<T> {
     fn eq(&self, rhs: &Vector3<T>) -> bool {
-        return self.x == rhs.x && self.y == rhs.y && self.z == self.z;
+        self.x == rhs.x && self.y == rhs.y && self.z == self.z
     }
 }
 
@@ -56,7 +56,7 @@ impl<T: Scalar> Add for Vector3<T> {
 
     fn add(self, rhs: Self) -> Self::Output {
         debug_assert!(!self.has_nan());
-        return Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z);
+        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
@@ -72,7 +72,7 @@ impl<T: Scalar> Sub for Vector3<T> {
 
     fn sub(self, rhs: Self) -> Self {
         debug_assert!(!rhs.has_nan());
-        return Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z);
+        Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
 
@@ -88,7 +88,7 @@ impl<T: Scalar> Mul<T> for Vector3<T> {
 
     fn mul(self, rhs: T) -> Self::Output {
         debug_assert!(!rhs.has_nan());
-        return Self::new(self.x * rhs, self.y * rhs, self.z * rhs);
+        Self::new(self.x * rhs, self.y * rhs, self.z * rhs)
     }
 }
 
@@ -105,7 +105,7 @@ impl<T: Scalar> Div<T> for Vector3<T> {
     fn div(self, rhs: T) -> Self::Output {
         debug_assert_ne!(rhs, T::zero());
         let inv = T::one() / rhs;
-        return Self::new(self.x * inv, self.y * inv, self.z * inv);
+        Self::new(self.x * inv, self.y * inv, self.z * inv)
     }
 }
 
@@ -119,7 +119,7 @@ impl<T: Scalar> DivAssign<T> for Vector3<T> {
 impl<T: Scalar> Neg for Vector3<T> {
     type Output = Self;
     fn neg(self) -> Self {
-        return Self::new(-self.x, -self.y, -self.z);
+        Self::new(-self.x, -self.y, -self.z)
     }
 }
 

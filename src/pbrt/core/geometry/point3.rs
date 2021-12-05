@@ -52,14 +52,14 @@ impl<T: Scalar + From<U>, U: Scalar> From<Point3<U>> for Vector3<T> {
 
 impl<T: Scalar> HasNaN for Point3<T> {
     fn has_nan(&self) -> bool {
-        return self.x.has_nan() || self.y.has_nan() && self.z.has_nan();
+        self.x.has_nan() || self.y.has_nan() && self.z.has_nan()
     }
 }
 
 impl<T: Scalar> PartialEq for Point3<T> {
     // todo: with floats nan != nan ?
     fn eq(&self, rhs: &Point3<T>) -> bool {
-        return self.x == rhs.x && self.y == rhs.y && self.z == rhs.z;
+        self.x == rhs.x && self.y == rhs.y && self.z == rhs.z
     }
 }
 
@@ -68,7 +68,7 @@ impl<T: Scalar> Add<Vector3<T>> for Point3<T> {
 
     fn add(self, rhs: Vector3<T>) -> Self::Output {
         debug_assert!(!self.has_nan());
-        return Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z);
+        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
@@ -91,7 +91,7 @@ impl<T: Scalar> Add for Point3<T> {
 
     fn add(self, rhs: Self) -> Self::Output {
         debug_assert!(!self.has_nan());
-        return Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z);
+        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
@@ -125,7 +125,7 @@ impl<T: Scalar> Sub for &Point3<T> {
 impl<T: Scalar> Neg for Point3<T> {
     type Output = Self;
     fn neg(self) -> Self {
-        return Self::new(-self.x, -self.y, -self.z);
+        Self::new(-self.x, -self.y, -self.z)
     }
 }
 
@@ -141,7 +141,7 @@ impl<T: Scalar> Mul<T> for Point3<T> {
 
     fn mul(self, rhs: T) -> Self::Output {
         debug_assert!(!rhs.has_nan());
-        return Self::new(self.x * rhs, self.y * rhs, self.z * rhs);
+        Self::new(self.x * rhs, self.y * rhs, self.z * rhs)
     }
 }
 
@@ -150,11 +150,11 @@ impl<T: Scalar> Mul<Float> for &Point3<T> {
 
     fn mul(self, rhs: Float) -> Self::Output {
         debug_assert!(!rhs.has_nan());
-        return Self::Output::new(
+        Self::Output::new(
             T::from_float(self.x.to_float() * rhs),
             T::from_float(self.y.to_float() * rhs),
             T::from_float(self.z.to_float() * rhs),
-        );
+        )
     }
 }
 
@@ -171,7 +171,7 @@ impl<T: Scalar> Div<T> for Point3<T> {
     fn div(self, rhs: T) -> Self::Output {
         debug_assert_ne!(rhs, T::zero());
         let inv = T::one() / rhs;
-        return Self::new(self.x * inv, self.y * inv, self.z * inv);
+        Self::new(self.x * inv, self.y * inv, self.z * inv)
     }
 }
 

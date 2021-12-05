@@ -39,14 +39,14 @@ impl<T: Scalar> Vector2<T> {
 
 impl<T: Scalar> HasNaN for Vector2<T> {
     fn has_nan(&self) -> bool {
-        return self.x.has_nan() || self.y.has_nan();
+        self.x.has_nan() || self.y.has_nan()
     }
 }
 
 impl<T: Scalar> PartialEq for Vector2<T> {
     // todo: with floats nan != nan ?
     fn eq(&self, rhs: &Vector2<T>) -> bool {
-        return self.x == rhs.x && self.y == rhs.y;
+        self.x == rhs.x && self.y == rhs.y
     }
 }
 
@@ -59,7 +59,7 @@ impl<T: Scalar> Add for Vector2<T> {
 
     fn add(self, rhs: Self) -> Self::Output {
         debug_assert!(!self.has_nan());
-        return Self::new(self.x + rhs.x, self.y + rhs.y);
+        Self::new(self.x + rhs.x, self.y + rhs.y)
     }
 }
 
@@ -75,7 +75,7 @@ impl<T: Scalar> Sub for Vector2<T> {
 
     fn sub(self, rhs: Self) -> Self {
         debug_assert!(!rhs.has_nan());
-        return Self::new(self.x - rhs.x, self.y - rhs.y);
+        Self::new(self.x - rhs.x, self.y - rhs.y)
     }
 }
 
@@ -91,7 +91,7 @@ impl<T: Scalar> Mul<T> for Vector2<T> {
 
     fn mul(self, rhs: T) -> Self::Output {
         debug_assert!(!rhs.has_nan());
-        return Self::new(self.x * rhs, self.y * rhs);
+        Self::new(self.x * rhs, self.y * rhs)
     }
 }
 
@@ -108,7 +108,7 @@ impl<T: Scalar> Div<T> for Vector2<T> {
     fn div(self, rhs: T) -> Self::Output {
         debug_assert_ne!(rhs, T::zero());
         let inv = T::one() / rhs;
-        return Self::new(self.x * inv, self.y * inv);
+        Self::new(self.x * inv, self.y * inv)
     }
 }
 
@@ -122,7 +122,7 @@ impl<T: Scalar> DivAssign<T> for Vector2<T> {
 impl<T: Scalar> Neg for Vector2<T> {
     type Output = Self;
     fn neg(self) -> Self {
-        return Self::new(-self.x, -self.y);
+        Self::new(-self.x, -self.y)
     }
 }
 
