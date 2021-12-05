@@ -195,18 +195,15 @@ impl<T: Scalar> Index<Int> for Point2<T> {
     }
 }
 
-#[allow(dead_code)]
 pub fn distance2<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
     (left - right).length()
 }
 
-#[allow(dead_code)]
 pub fn distance2_squared<T: Scalar>(left: &Point2<T>, right: &Point2<T>) -> Float {
     (left - right).length_squared()
 }
 
-#[allow(dead_code)]
-pub fn lerp<T: Scalar>(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
+pub fn lerp2<T: Scalar>(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
     p0 * (Float::one() - t) + p1 * t
 }
 
@@ -215,9 +212,8 @@ pub fn lerp<T: Scalar>(t: Float, p0: &Point2<T>, p1: &Point2<T>) -> Point2<T> {
 
 // todo: reference or direct value
 
-#[allow(dead_code)]
 pub type Point2f = Point2<Float>;
-#[allow(dead_code)]
+
 pub type Point2i = Point2<i32>;
 
 #[cfg(test)]

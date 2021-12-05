@@ -65,9 +65,7 @@ mod tests {
 
     #[test]
     pub fn test_from_od() {
-        let ray = super::Ray::from_od(
-            &Point3f::new(1., 2., 3.),
-            &Vector3f::new(4., 5., 6.));
+        let ray = super::Ray::from_od(&Point3f::new(1., 2., 3.), &Vector3f::new(4., 5., 6.));
         assert_eq!(ray.o, Point3f::new(1., 2., 3.));
         assert_eq!(ray.d, Vector3f::new(4., 5., 6.));
         assert_eq!(ray.t_max, Float::INFINITY);

@@ -1,6 +1,6 @@
 use std::ops::Index;
 
-use crate::pbrt::{Int, Point2, Scalar, Vector2};
+use crate::pbrt::{lerp, Int, Point2, Point2f, Scalar, Vector2};
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Bounds2<T: Scalar> {
@@ -34,7 +34,18 @@ impl<T: Scalar> Bounds2<T> {
 
     pub fn maximum_extent(&self) -> Int {
         let diagonal = self.diagonal();
-        if diagonal.x > diagonal.y { 0 } else { 1 }
+        if diagonal.x > diagonal.y {
+            0
+        } else {
+            1
+        }
+    }
+
+    pub fn lerp(&self, t: &Point2f) -> Point2<T> {
+        Point2::<T>::new(
+            T::from_float(lerp(t.x, self.p_min.x.to_float(), self.p_max.x.to_float())),
+            T::from_float(lerp(t.y, self.p_min.y.to_float(), self.p_max.y.to_float())),
+        )
     }
 }
 
@@ -50,7 +61,6 @@ impl<T: Scalar> Index<Int> for Bounds2<T> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -90,7 +100,7 @@ mod tests {
         let pt2 = Point2::<Float>::new(12.0, 2.0);
         let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
         let area = b.area();
-        assert_eq!(area, 9.0*11.0);
+        assert_eq!(area, 9.0 * 11.0);
     }
 
     #[test]
@@ -128,5 +138,4 @@ mod tests {
         let b = super::Bounds2::<Float>::from_pts(pt1, pt2);
         assert_eq!(b[2], Point2::<Float>::new(1.0, 2.0));
     }
-
 }

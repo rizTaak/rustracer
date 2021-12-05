@@ -22,12 +22,14 @@ pub trait HasNaN {
 }
 
 impl HasNaN for Float {
+    #[inline(always)]
     fn has_nan(&self) -> bool {
         self.is_nan()
     }
 }
 
 impl HasNaN for Int {
+    #[inline(always)]
     fn has_nan(&self) -> bool {
         false
     }
@@ -38,11 +40,17 @@ pub trait Zero {
 }
 
 impl Zero for Float {
-    fn zero() -> Self { 0 as Float }
+    #[inline(always)]
+    fn zero() -> Self {
+        0 as Float
+    }
 }
 
 impl Zero for Int {
-    fn zero() -> Self { 0 as Int }
+    #[inline(always)]
+    fn zero() -> Self {
+        0 as Int
+    }
 }
 
 pub trait One {
@@ -50,25 +58,32 @@ pub trait One {
 }
 
 impl One for Float {
-    fn one() -> Self { 1 as Float }
+    #[inline(always)]
+    fn one() -> Self {
+        1 as Float
+    }
 }
 
 impl One for Int {
-    fn one() -> Self { 1 as Int }
+    #[inline(always)]
+    fn one() -> Self {
+        1 as Int
+    }
 }
-
 
 pub trait IntoFloat {
     fn to_float(&self) -> Float;
 }
 
 impl IntoFloat for Int {
+    #[inline(always)]
     fn to_float(&self) -> Float {
         *self as Float
     }
 }
 
 impl IntoFloat for Float {
+    #[inline(always)]
     fn to_float(&self) -> Float {
         *self
     }
@@ -79,28 +94,41 @@ pub trait FromFloat {
 }
 
 impl FromFloat for Float {
-    fn from_float(val: Float) -> Self { val as Self }
+    #[inline(always)]
+    fn from_float(val: Float) -> Self {
+        val as Self
+    }
 }
 
 impl FromFloat for Int {
-    fn from_float(val: Float) -> Self { val as Self }
+    #[inline(always)]
+    fn from_float(val: Float) -> Self {
+        val as Self
+    }
 }
 
 pub trait Min: Sized + PartialOrd {
     fn min_value() -> Self;
 
+    #[inline(always)]
     fn min(left: Self, right: Self) -> Self {
-        if left < right { left } else { right }
+        if left < right {
+            left
+        } else {
+            right
+        }
     }
 }
 
 impl Min for Int {
+    #[inline(always)]
     fn min_value() -> Self {
         Int::MIN
     }
 }
 
 impl Min for Float {
+    #[inline(always)]
     fn min_value() -> Self {
         Float::MIN
     }
@@ -109,48 +137,56 @@ impl Min for Float {
 pub trait Max: Sized + PartialOrd {
     fn max_value() -> Self;
 
+    #[inline(always)]
     fn max(left: Self, right: Self) -> Self {
-        if left > right { left } else { right }
+        if left > right {
+            left
+        } else {
+            right
+        }
     }
 }
 
 impl Max for Int {
+    #[inline(always)]
     fn max_value() -> Self {
         Int::MAX
     }
 }
 
 impl Max for Float {
+    #[inline(always)]
     fn max_value() -> Self {
         Float::MAX
     }
 }
 
 pub trait Scalar:
-Sized
-+ Default
-+ Clone
-+ Copy
-+ HasNaN
-+ Zero
-+ One
-+ Add<Output=Self>
-+ Sub<Output=Self>
-+ Mul<Output=Self>
-+ Div<Output=Self>
-+ AddAssign
-+ SubAssign
-+ MulAssign
-+ DivAssign
-+ Debug
-+ PartialEq
-+ IntoFloat
-+ FromFloat
-+ Neg<Output=Self>
-+ Min
-+ Max
-+ PartialOrd
-{}
+    Sized
+    + Default
+    + Clone
+    + Copy
+    + HasNaN
+    + Zero
+    + One
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + AddAssign
+    + SubAssign
+    + MulAssign
+    + DivAssign
+    + Debug
+    + PartialEq
+    + IntoFloat
+    + FromFloat
+    + Neg<Output = Self>
+    + Min
+    + Max
+    + PartialOrd
+{
+}
 
 impl Scalar for Int {}
 

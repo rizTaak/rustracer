@@ -1,3 +1,5 @@
 {
     "coverage-gutters.coverageBaseDir": "target/tarpaulin/",
+    "editor.defaultFormatter": "matklad.rust-analyzer",
+    "editor.formatOnSave": true
 }

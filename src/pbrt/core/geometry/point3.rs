@@ -207,7 +207,7 @@ pub fn distance3_squared<T: Scalar>(left: &Point3<T>, right: &Point3<T>) -> Floa
 }
 
 #[allow(dead_code)]
-pub fn lerp<T: Scalar>(t: Float, p0: &Point3<T>, p1: &Point3<T>) -> Point3<T> {
+pub fn lerp3<T: Scalar>(t: Float, p0: &Point3<T>, p1: &Point3<T>) -> Point3<T> {
     p0 * (Float::one() - t) + p1 * t
 }
 

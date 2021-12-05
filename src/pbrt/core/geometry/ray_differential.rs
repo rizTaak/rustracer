@@ -10,7 +10,6 @@ pub struct RayDifferential<'a> {
     pub ry_direction: Vector3f,
 }
 
-
 impl<'a> RayDifferential<'a> {
     pub fn from_ray(ray: &Ray<'a>) -> Self {
         Self {
@@ -23,14 +22,17 @@ impl<'a> RayDifferential<'a> {
         }
     }
     pub fn from_od(o: &Point3f, d: &Vector3f) -> Self {
-        RayDifferential::new(o, d, false, &None,
-                             &None, &None, &None)
+        RayDifferential::new(o, d, false, &None, &None, &None, &None)
     }
-    pub fn new(o: &Point3f, d: &Vector3f, has_differential: bool,
-               rx_origin: &Option<Point3f>,
-               ry_origin: &Option<Point3f>,
-               rx_direction: &Option<Vector3f>,
-               ry_direction: &Option<Vector3f>) -> Self {
+    pub fn new(
+        o: &Point3f,
+        d: &Vector3f,
+        has_differential: bool,
+        rx_origin: &Option<Point3f>,
+        ry_origin: &Option<Point3f>,
+        rx_direction: &Option<Vector3f>,
+        ry_direction: &Option<Vector3f>,
+    ) -> Self {
         Self {
             ray: Ray::new(o, d, None, None, None),
             has_differential,
@@ -42,9 +44,12 @@ impl<'a> RayDifferential<'a> {
     }
 
     pub fn has_nan(&self) -> bool {
-        self.ray.has_nan() ||
-            (self.has_differential && (self.rx_origin.has_nan() || self.rx_direction.has_nan()
-                || self.ry_origin.has_nan() || self.ry_direction.has_nan()))
+        self.ray.has_nan()
+            || (self.has_differential
+                && (self.rx_origin.has_nan()
+                    || self.rx_direction.has_nan()
+                    || self.ry_origin.has_nan()
+                    || self.ry_direction.has_nan()))
     }
 
     pub fn scale_differential(&mut self, s: Float) {
@@ -97,9 +102,15 @@ mod tests {
         let ry_o = Point3f::new(1., 2., 5.);
         let rx_d = Vector3f::new(4., 5., 7.);
         let ry_d = Vector3f::new(4., 5., 8.);
-        let ray_diff = super::RayDifferential::new(o, d, true,
-                                                   &Some(rx_o), &Some(ry_o),
-                                                   &Some(rx_d), &Some(ry_d));
+        let ray_diff = super::RayDifferential::new(
+            o,
+            d,
+            true,
+            &Some(rx_o),
+            &Some(ry_o),
+            &Some(rx_d),
+            &Some(ry_d),
+        );
         assert_eq!(ray_diff.ray.o, *o);
         assert_eq!(ray_diff.ray.d, *d);
         assert_eq!(ray_diff.has_differential, true);
@@ -117,14 +128,24 @@ mod tests {
         let ry_o = Point3f::new(1., 2., 5.);
         let rx_d = Vector3f::new(4., 5., 7.);
         let ry_d = Vector3f::new(4., 5., 8.);
-        let mut ray_diff = super::RayDifferential::new(o, d, true,
-                                                       &Some(rx_o), &Some(ry_o),
-                                                       &Some(rx_d), &Some(ry_d));
+        let mut ray_diff = super::RayDifferential::new(
+            o,
+            d,
+            true,
+            &Some(rx_o),
+            &Some(ry_o),
+            &Some(rx_d),
+            &Some(ry_d),
+        );
         let scale_factor = 2.0;
-        let updated_rx_origin = ray_diff.ray.o + (ray_diff.rx_origin - ray_diff.ray.o) * scale_factor;
-        let updated_ry_origin = ray_diff.ray.o + (ray_diff.ry_origin - ray_diff.ray.o) * scale_factor;
-        let updated_rx_direction = ray_diff.ray.d + (ray_diff.rx_direction - ray_diff.ray.d) * scale_factor;
-        let updated_ry_direction = ray_diff.ray.d + (ray_diff.ry_direction - ray_diff.ray.d) * scale_factor;
+        let updated_rx_origin =
+            ray_diff.ray.o + (ray_diff.rx_origin - ray_diff.ray.o) * scale_factor;
+        let updated_ry_origin =
+            ray_diff.ray.o + (ray_diff.ry_origin - ray_diff.ray.o) * scale_factor;
+        let updated_rx_direction =
+            ray_diff.ray.d + (ray_diff.rx_direction - ray_diff.ray.d) * scale_factor;
+        let updated_ry_direction =
+            ray_diff.ray.d + (ray_diff.ry_direction - ray_diff.ray.d) * scale_factor;
 
         ray_diff.scale_differential(scale_factor);
 
