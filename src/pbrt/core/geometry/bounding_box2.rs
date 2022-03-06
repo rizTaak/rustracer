@@ -69,7 +69,7 @@ impl<T: Scalar> Bounds2<T> {
 
     pub fn bounding_sphere(&self, c: &mut Point2<T>, rad: &mut Float) {
         *c = (self.p_min + self.p_max) / T::from_float(2.0); // todo: should this be '2.0 as Float'
-        *rad = if Bounds2::inside(c, &self) {
+        *rad = if Bounds2::inside(c, self) {
             Point2::<T>::distance(c, &self.p_max)
         } else {
             Float::zero()
@@ -81,7 +81,7 @@ impl<T: Scalar> Index<Int> for Bounds2<T> {
     type Output = Point2<T>;
 
     fn index(&self, idx: Int) -> &Self::Output {
-        debug_assert!(0 <= idx && idx <= 1);
+        debug_assert!((0..=1).contains(&idx));
         match idx {
             0 => &self.p_min,
             1 => &self.p_max,
@@ -183,8 +183,8 @@ mod tests {
         let max = Point2::<Float>::new(3.0, 3.0);
         let b = super::Bounds2::<Float>::from_pts(min, max);
         let check = Point2::<Float>::new(2.0, 2.0);
-        assert_eq!(super::Bounds2::inside(&check, &b), true);
-        assert_eq!(super::Bounds2::inside(&max, &b), true);
+        assert!(super::Bounds2::inside(&check, &b));
+        assert!(super::Bounds2::inside(&max, &b));
     }
 
     #[test]
@@ -193,8 +193,8 @@ mod tests {
         let max = Point2::<Float>::new(3.0, 3.0);
         let b = super::Bounds2::<Float>::from_pts(min, max);
         let check = Point2::<Float>::new(2.0, 2.0);
-        assert_eq!(super::Bounds2::inside_exclusive(&check, &b), true);
-        assert_eq!(super::Bounds2::inside_exclusive(&max, &b), false);
+        assert!(super::Bounds2::inside_exclusive(&check, &b));
+        assert!(!super::Bounds2::inside_exclusive(&max, &b));
     }
 
     #[test]

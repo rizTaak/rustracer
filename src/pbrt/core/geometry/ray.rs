@@ -25,7 +25,7 @@ impl<'a> Ray<'a> {
             o: *o,
             d: *d,
             t_max: t_max.unwrap_or(Float::INFINITY),
-            time: time.unwrap_or(Float::default()),
+            time: time.unwrap_or_default(),
             medium,
         }
     }
@@ -67,7 +67,7 @@ mod tests {
         assert_eq!(ray.d, Vector3f::new(4., 5., 6.));
         assert_eq!(ray.t_max, Float::INFINITY);
         assert_eq!(ray.time, Float::default());
-        assert_eq!(ray.medium.is_none(), true);
+        assert!(ray.medium.is_none());
     }
 
     #[test]
@@ -83,7 +83,7 @@ mod tests {
         assert_eq!(ray.d, Vector3f::new(4., 5., 6.));
         assert_eq!(ray.t_max, Float::INFINITY);
         assert_eq!(ray.time, Float::default());
-        assert_eq!(ray.medium.is_none(), true);
+        assert!(ray.medium.is_none());
     }
 
     #[test]
@@ -95,7 +95,7 @@ mod tests {
             Option::None,
             Option::None,
         );
-        assert_eq!(ray.has_nan(), false)
+        assert!(!ray.has_nan())
     }
 
     #[test]
@@ -107,7 +107,7 @@ mod tests {
             Option::None,
             Option::None,
         );
-        assert_eq!(ray.has_nan(), true)
+        assert!(ray.has_nan())
     }
 
     #[test]

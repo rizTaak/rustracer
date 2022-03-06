@@ -49,7 +49,7 @@ impl Zero for Float {
 impl Zero for Int {
     #[inline(always)]
     fn zero() -> Self {
-        0 as Int
+        0
     }
 }
 
@@ -67,7 +67,7 @@ impl One for Float {
 impl One for Int {
     #[inline(always)]
     fn one() -> Self {
-        1 as Int
+        1
     }
 }
 

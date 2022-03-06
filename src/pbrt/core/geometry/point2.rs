@@ -197,7 +197,7 @@ impl<T: Scalar> Index<Int> for Point2<T> {
     type Output = T;
 
     fn index(&self, idx: Int) -> &Self::Output {
-        debug_assert!(0 <= idx && idx <= 1);
+        debug_assert!((0..=1).contains(&idx));
         match idx {
             0 => &self.x,
             1 => &self.y,
@@ -356,7 +356,7 @@ mod tests {
     #[test]
     pub fn test_point2_div_scalar() {
         let mut left = super::Point2f::new(2.0, 4.0);
-        left = left / 2.0 as Float;
+        left /= 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
     }
@@ -364,7 +364,7 @@ mod tests {
     #[test]
     pub fn test_point2_mul_scalar() {
         let mut left = super::Point2f::new(2.0, 3.0);
-        left = left * 2.0;
+        left *= 2.0;
         assert_eq!(left.x, 4.0);
         assert_eq!(left.y, 6.0);
     }
@@ -373,7 +373,7 @@ mod tests {
     pub fn test_point2_eq() {
         let left = super::Point2f::new(1.0, 2.0);
         let right = super::Point2f::new(1.0, 2.0);
-        assert_eq!(left == right, true);
+        assert!(left == right);
     }
 
     #[test]
@@ -396,7 +396,7 @@ mod tests {
             x: Float::NAN,
             y: Float::NAN,
         };
-        assert_eq!(vec2f.has_nan(), true);
+        assert!(vec2f.has_nan());
     }
 
     #[test]

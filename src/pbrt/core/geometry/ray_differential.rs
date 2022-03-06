@@ -36,10 +36,10 @@ impl<'a> RayDifferential<'a> {
         Self {
             ray: Ray::new(o, d, None, None, None),
             has_differential,
-            rx_origin: rx_origin.unwrap_or(Default::default()),
-            ry_origin: ry_origin.unwrap_or(Default::default()),
-            rx_direction: rx_direction.unwrap_or(Default::default()),
-            ry_direction: ry_direction.unwrap_or(Default::default()),
+            rx_origin: rx_origin.unwrap_or_default(),
+            ry_origin: ry_origin.unwrap_or_default(),
+            rx_direction: rx_direction.unwrap_or_default(),
+            ry_direction: ry_direction.unwrap_or_default(),
         }
     }
 
@@ -72,7 +72,7 @@ mod tests {
         let ray_diff = super::RayDifferential::from_ray(r);
         assert_eq!(ray_diff.ray.o, *o);
         assert_eq!(ray_diff.ray.d, *d);
-        assert_eq!(ray_diff.has_differential, false);
+        assert!(!ray_diff.has_differential);
     }
 
     #[test]
@@ -81,7 +81,7 @@ mod tests {
         let d = &Vector3f::new(4., 5., 6.);
         let r = &Ray::from_od(o, d);
         let ray_diff = super::RayDifferential::from_ray(r);
-        assert_eq!(false, ray_diff.has_nan())
+        assert!(!ray_diff.has_nan())
     }
 
     #[test]
@@ -91,7 +91,7 @@ mod tests {
         let ray_diff = super::RayDifferential::from_od(o, d);
         assert_eq!(ray_diff.ray.o, *o);
         assert_eq!(ray_diff.ray.d, *d);
-        assert_eq!(ray_diff.has_differential, false);
+        assert!(!ray_diff.has_differential);
     }
 
     #[test]
@@ -113,7 +113,7 @@ mod tests {
         );
         assert_eq!(ray_diff.ray.o, *o);
         assert_eq!(ray_diff.ray.d, *d);
-        assert_eq!(ray_diff.has_differential, true);
+        assert!(ray_diff.has_differential);
         assert_eq!(ray_diff.rx_origin, rx_o);
         assert_eq!(ray_diff.ry_origin, ry_o);
         assert_eq!(ray_diff.rx_direction, rx_d);
