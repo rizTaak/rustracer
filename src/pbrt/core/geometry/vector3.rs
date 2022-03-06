@@ -24,7 +24,7 @@ impl<T: Scalar> Vector3<T> {
         debug_assert!(!x.has_nan());
         debug_assert!(!y.has_nan());
         debug_assert!(!z.has_nan());
-        Self { x: x, y: y, z: z }
+        Self { x, y, z }
     }
 
     pub fn length_squared(&self) -> Float {
@@ -45,7 +45,7 @@ impl<T: Scalar> HasNaN for Vector3<T> {
 
 impl<T: Scalar> PartialEq for Vector3<T> {
     fn eq(&self, rhs: &Vector3<T>) -> bool {
-        self.x == rhs.x && self.y == rhs.y && self.z == self.z
+        self.x == rhs.x && self.y == rhs.y && self.z == rhs.z
     }
 }
 
@@ -125,7 +125,7 @@ impl<T: Scalar> Index<Int> for Vector3<T> {
     type Output = T;
 
     fn index(&self, idx: Int) -> &Self::Output {
-        debug_assert!(0 <= idx && idx <= 2);
+        debug_assert!((0..=2).contains(&idx));
         match idx {
             0 => &self.x,
             1 => &self.y,
@@ -198,7 +198,7 @@ mod tests {
     #[test]
     pub fn test_vector3_div_scalar() {
         let mut left = super::Vector3f::new(2.0, 4.0, 8.0);
-        left = left / 2.0 as Float;
+        left /= 2.0 as Float;
         assert_eq!(left.x, 1.0);
         assert_eq!(left.y, 2.0);
         assert_eq!(left.z, 4.0);
@@ -207,7 +207,7 @@ mod tests {
     #[test]
     pub fn test_vector3_mul_scalar() {
         let mut left = super::Vector3f::new(2.0, 3.0, 4.0);
-        left = left * 2.0;
+        left *= 2.0;
         assert_eq!(left.x, 4.0);
         assert_eq!(left.y, 6.0);
         assert_eq!(left.z, 8.0);
@@ -217,7 +217,7 @@ mod tests {
     pub fn test_vector3_eq() {
         let left = super::Vector3f::new(1.0, 2.0, 4.0);
         let right = super::Vector3f::new(1.0, 2.0, 4.0);
-        assert_eq!(left == right, true);
+        assert!(left == right);
     }
 
     #[test]
@@ -243,7 +243,7 @@ mod tests {
             y: Float::NAN,
             z: Float::NAN,
         };
-        assert_eq!(vec3f.has_nan(), true);
+        assert!(vec3f.has_nan());
     }
 
     #[test]
